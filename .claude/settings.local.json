@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find . -type f -not -path './.git/*' -not -name '*.md' -not -name '*.jpg')",
+      "Bash(cat .claude-plugin/marketplace.json plugins/*/.claude-plugin/plugin.json)",
+      "Bash(head -30 plugins/*/skills/*/SKILL.md)",
+      "Bash(python -m pip install playwright)",
+      "Bash(winget install *)"
+    ]
+  }
+}
