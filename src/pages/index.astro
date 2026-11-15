@@ -1,30 +1,36 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Titular from '../components/Titular.astro';
+import Frase from '../components/Frase.astro';
+import Foto from '../components/Foto.astro';
+import { getFavorites, getPage, getSettings } from '../lib/sanity';
+const p = (await getPage('inicio')) ?? {};
+const s = (await getSettings()) ?? {};
+const favoritos = await getFavorites();
+const cinta = p.cinta ?? [];
 ---
-<Layout title="Cocoa · Pastelería & Catering en Pereira" description="Catering, repostería por encargo y chef privado en Pereira y el Eje Cafetero. Hecho a mano, servido con alma." bodyClass="home">
+<Layout seo={p.seo} title="Cocoa · Pastelería & Catering en Pereira" description="Catering, repostería por encargo y chef privado en Pereira y el Eje Cafetero. Hecho a mano, servido con alma." bodyClass="home">
 <section class="hero" aria-labelledby="hero-title">
 <div class="hero-media" aria-hidden="true">
-<img class="hero-slide" src="https://images.unsplash.com/photo-1637534371564-458a3a29972f?auto=format&amp;fit=crop&amp;w=1100&amp;q=70" srcset="https://images.unsplash.com/photo-1637534371564-458a3a29972f?auto=format&amp;fit=crop&amp;w=800&amp;q=70 800w, https://images.unsplash.com/photo-1637534371564-458a3a29972f?auto=format&amp;fit=crop&amp;w=1800&amp;q=70 1800w" sizes="100vw" alt="" fetchpriority="high">
-<img class="hero-slide" src="https://images.unsplash.com/photo-1602351447937-745cb720612f?auto=format&amp;fit=crop&amp;w=1100&amp;q=70" srcset="https://images.unsplash.com/photo-1602351447937-745cb720612f?auto=format&amp;fit=crop&amp;w=800&amp;q=70 800w, https://images.unsplash.com/photo-1602351447937-745cb720612f?auto=format&amp;fit=crop&amp;w=1800&amp;q=70 1800w" sizes="100vw" alt="">
-<img class="hero-slide" src="https://images.unsplash.com/photo-1775497950071-965cf9e20b2f?auto=format&amp;fit=crop&amp;w=1100&amp;q=70" srcset="https://images.unsplash.com/photo-1775497950071-965cf9e20b2f?auto=format&amp;fit=crop&amp;w=800&amp;q=70 800w, https://images.unsplash.com/photo-1775497950071-965cf9e20b2f?auto=format&amp;fit=crop&amp;w=1800&amp;q=70 1800w" sizes="100vw" alt="">
+{(p.portadaFotos ?? []).map((f, i) => <Foto class="hero-slide" image={f} w={1100} widths={[800, 1800]} sizes="100vw" alt="" fetchpriority={i === 0 ? 'high' : undefined} />)}
 </div>
 <div class="hero-shade"></div>
 <div class="specks" aria-hidden="true"></div>
 <div class="hero-in">
 <img class="hero-hat" src="/assets/img/logos/isotype.svg" alt="" width="104" height="93">
 <p class="hero-brand"><b>cocoa</b><small>Pastelería &amp; Catering</small></p>
-<h1 id="hero-title" class="serif"><span class="hl"><span>Hecho</span></span><span class="hl"><span><em>con el alma.</em></span></span></h1>
-<p class="hero-sub">Pasteleria y Catering.</p>
+<h1 id="hero-title" class="serif"><Titular value={p.portadaTitulo} mode="hl" /></h1>
+<p class="hero-sub">{p.portadaSubtitulo}</p>
 <div class="hero-cta">
-<a class="btn light" href="/contacto">Cuéntanos tu evento <i class="arr"></i></a>
-<a class="link light" href="/reposteria">Ver la vitrina</a>
+<a class="btn light" href="/contacto">{p.portadaBoton} <i class="arr"></i></a>
+<a class="link light" href="/reposteria">{p.portadaEnlace}</a>
 </div>
 </div>
-<a class="badge" href="/contacto" aria-label="Cotiza tu evento">
-<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="ring" d="M50 50m-40 0a40 40 0 1 1 80 0a40 40 0 1 1-80 0"/></defs><text><textPath href="#ring" textLength="246">Cotiza tu evento · Hecho a mano ·</textPath></text></svg>
+<a class="badge" href="/contacto" aria-label={s.botonCotizar}>
+<svg class="ring" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="ring" d="M50 50m-40 0a40 40 0 1 1 80 0a40 40 0 1 1-80 0"/></defs><text><textPath href="#ring" textLength="246">{p.portadaSello}</textPath></text></svg>
 <img class="hat" src="/assets/img/logos/isotype.svg" alt="" width="40" height="36">
 </a>
-<div class="scroll-cue" aria-hidden="true">Desliza<span></span></div>
+<div class="scroll-cue" aria-hidden="true">{p.portadaDesliza}<span></span></div>
 <div class="waves" aria-hidden="true">
 <svg viewBox="0 0 2880 120" preserveAspectRatio="none"><path d="M0 60C240 0 480 0 720 60S1200 120 1440 60S1920 0 2160 60S2640 120 2880 60V120H0Z"/></svg>
 <svg viewBox="0 0 2880 120" preserveAspectRatio="none"><path d="M0 60C240 0 480 0 720 60S1200 120 1440 60S1920 0 2160 60S2640 120 2880 60V120H0Z"/></svg>
@@ -33,8 +39,8 @@ import Layout from '../layouts/Layout.astro';
 
 <div class="marquee" aria-hidden="true">
 <div class="mq">
-<span>Catering</span><i></i><span>Repostería</span><i></i><span>Chef privado</span><i></i><span>Mesas de dulces</span><i></i><span>Coffee breaks</span><i></i><span>Bodas</span><i></i>
-<span>Catering</span><i></i><span>Repostería</span><i></i><span>Chef privado</span><i></i><span>Mesas de dulces</span><i></i><span>Coffee breaks</span><i></i><span>Bodas</span><i></i>
+{cinta.map((w) => <><span>{w}</span><i></i></>)}
+{cinta.map((w) => <><span>{w}</span><i></i></>)}
 </div>
 </div>
 
@@ -44,17 +50,15 @@ import Layout from '../layouts/Layout.astro';
 <section class="sec">
 <div class="wrap intro">
 <div>
-<p class="eyebrow rv">Nuestra cocina</p>
-<h2 class="serif statement" data-split>Creemos que la comida es la forma más honesta de celebrar. Horneamos, cocinamos y montamos cada mesa <em class="accent">como si fuera para nuestra familia.</em></h2>
+<p class="eyebrow rv">{p.cocinaEtiqueta}</p>
+<h2 class="serif statement" data-split><Frase value={p.cocinaFrase} /></h2>
 <div class="facts">
-<div class="rv"><h3 class="serif">Desde cero</h3><p>Masas, rellenos y salsas hechos en nuestro obrador.</p></div>
-<div class="rv"><h3 class="serif">Producto local</h3><p>Frutas, lácteos y café de productores del Eje Cafetero.</p></div>
-<div class="rv"><h3 class="serif">A tu medida</h3><p>Cada menú se diseña para tu ocasión y tus invitados.</p></div>
+{(p.cocinaPuntos ?? []).map((x) => <div class="rv"><h3 class="serif">{x.titulo}</h3><p>{x.texto}</p></div>)}
 </div>
 </div>
 <div class="intro-media">
-<div class="ph arch unmask"><img class="zoom" src="https://images.unsplash.com/photo-1549590143-d5855148a9d5?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Manos espolvoreando harina sobre una mesa de trabajo junto a huevos y un batidor" loading="lazy"></div>
-<div class="ph d coin"><img class="px" src="https://images.unsplash.com/photo-1493925410384-84f842e616fb?auto=format&amp;fit=crop&amp;w=500&amp;q=70" alt="Mano sosteniendo granos de cacao secos" loading="lazy"></div>
+<div class="ph arch unmask"><Foto class="zoom" image={p.cocinaFoto} w={1000} loading="lazy" /></div>
+<div class="ph d coin"><Foto class="px" image={p.cocinaFotoPequena} w={500} loading="lazy" /></div>
 </div>
 </div>
 </section>
@@ -62,39 +66,23 @@ import Layout from '../layouts/Layout.astro';
 <section class="sec" style="padding-top:0" aria-labelledby="svc-title">
 <div class="wrap svc">
 <div class="svc-side">
-<p class="eyebrow rv">Lo que hacemos</p>
-<h2 id="svc-title" class="serif h-l lines"><span class="ln"><span>Tres maneras de</span></span><span class="ln"><span><em>llenar tu mesa</em></span></span></h2>
-<p class="lead rv">Desde un coffee break para tu equipo hasta la torta de tu boda o una cena privada en casa. Tú pones la ocasión; nosotros, todo lo demás.</p>
-<a class="link rv" href="/contacto">Cotiza tu evento <i class="arr"></i></a>
+<p class="eyebrow rv">{p.serviciosEtiqueta}</p>
+<h2 id="svc-title" class="serif h-l lines"><Titular value={p.serviciosTitulo} /></h2>
+<p class="lead rv">{p.serviciosTexto}</p>
+<a class="link rv" href="/contacto">{s.botonCotizar} <i class="arr"></i></a>
 </div>
 <div class="cards">
-<article class="card" style="--n:0">
-<div class="ph unmask"><img src="https://images.unsplash.com/photo-1761315414017-04c3906359d1?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Surtido de bruschettas gourmet servidas en una bandeja de mármol" loading="lazy"></div>
+{(p.serviciosTarjetas ?? []).map((t, i) => (
+<article class="card" style={`--n:${i}`}>
+<div class={i === 2 ? 'ph d unmask' : 'ph unmask'}><Foto image={t.foto} w={1000} loading="lazy" /></div>
 <div class="card-body">
-<p class="eyebrow">01 · Catering</p>
-<h3 class="serif">Eventos que se sienten en casa</h3>
-<p>Menús completos, estaciones y servicio para bodas, empresas y celebraciones. Montaje, meseros y loza incluidos.</p>
-<a class="link" href="/catering">Ver catering <i class="arr"></i></a>
+<p class="eyebrow">{t.etiqueta}</p>
+<h3 class="serif">{t.titulo}</h3>
+<p>{t.texto}</p>
+<a class="link" href={t.destino ?? '/catering'}>{t.enlace} <i class="arr"></i></a>
 </div>
 </article>
-<article class="card" style="--n:1">
-<div class="ph unmask"><img src="https://images.unsplash.com/photo-1623428454614-abaf00244e52?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Torta blanca de varios pisos decorada con fresas y flores frescas" loading="lazy"></div>
-<div class="card-body">
-<p class="eyebrow">02 · Repostería</p>
-<h3 class="serif">Postres que cuentan algo</h3>
-<p>Tortas, postres individuales, galletas y mesas de dulces. Por encargo y totalmente personalizados.</p>
-<a class="link" href="/reposteria">Ver repostería <i class="arr"></i></a>
-</div>
-</article>
-<article class="card" style="--n:2">
-<div class="ph d unmask"><img src="https://images.unsplash.com/photo-1775513153018-0c7ac7899751?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Chef emplatando con pinzas un plato gourmet" loading="lazy"></div>
-<div class="card-body">
-<p class="eyebrow">03 · Chef privado</p>
-<h3 class="serif">Tu cocina, nuestro menú</h3>
-<p>Cenas de varios tiempos preparadas y servidas en tu casa. Tú solo disfrutas: nosotros llegamos, cocinamos y dejamos todo limpio.</p>
-<a class="link" href="/catering">Conocer más <i class="arr"></i></a>
-</div>
-</article>
+))}
 </div>
 </div>
 </section>
@@ -103,37 +91,30 @@ import Layout from '../layouts/Layout.astro';
 <section class="sec dark round-top strip" aria-labelledby="strip-title">
 <div class="wrap split">
 <div>
-<p class="eyebrow rv">Desde la vitrina</p>
-<h2 id="strip-title" class="serif h-l lines" style="margin-top:18px"><span class="ln"><span>Los favoritos <em>de la casa</em></span></span></h2>
+<p class="eyebrow rv">{p.favoritosEtiqueta}</p>
+<h2 id="strip-title" class="serif h-l lines" style="margin-top:18px"><Titular value={p.favoritosTitulo} /></h2>
 </div>
-<a class="link light rv" href="/reposteria">Ver toda la galería <i class="arr"></i></a>
+<a class="link light rv" href="/reposteria">{p.favoritosEnlace} <i class="arr"></i></a>
 </div>
 <div class="strip-box" tabindex="0" role="region" aria-label="Postres destacados, desliza para ver más">
 <div class="track">
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Torta de chocolate de tres capas con crema y cerezas" loading="lazy"></div><h3 class="serif">Torta de chocolate y arequipe</h3><span>Tortas</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1774988867972-98caecc776d8?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Porción de cheesecake con fruta encima" loading="lazy"></div><h3 class="serif">Cheesecake de maracuyá</h3><span>Individual</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1620980776848-84ac10194945?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Tarta de fresas y arándanos sobre una mesa de madera" loading="lazy"></div><h3 class="serif">Tartaletas de frutos rojos</h3><span>Individual</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Galletas horneadas con chips de chocolate en primer plano" loading="lazy"></div><h3 class="serif">Galletas de mantequilla</h3><span>Galletas</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1702925614886-50ad13c88d3f?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Porción de torta cremosa servida en un plato" loading="lazy"></div><h3 class="serif">Torta tres leches</h3><span>Tortas</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1558326567-98ae2405596b?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Macarons sobre una mesa" loading="lazy"></div><h3 class="serif">Macarons de café</h3><span>Mesas</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1636743715220-d8f8dd900b87?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Brownies apilados sobre un plato blanco" loading="lazy"></div><h3 class="serif">Brownies con nueces</h3><span>Individual</span></article>
-<article class="dcard"><div class="ph arch"><img src="https://images.unsplash.com/photo-1558024920-b41e1887dc32?auto=format&amp;fit=crop&amp;w=700&amp;q=70" alt="Tres dulces rellenos apilados" loading="lazy"></div><h3 class="serif">Alfajores de maicena</h3><span>Galletas</span></article>
+{favoritos.map((d) => <article class="dcard"><div class="ph arch"><Foto image={d.foto} w={700} loading="lazy" /></div><h3 class="serif">{d.nombreInicio || d.nombre}</h3><span>{d.categoria?.nombreCorto || d.categoria?.nombre}</span></article>)}
 </div>
 </div>
-<div class="wrap rail" aria-hidden="true"><span>Desliza</span><b><i></i></b></div>
+<div class="wrap rail" aria-hidden="true"><span>{p.favoritosDesliza}</span><b><i></i></b></div>
 </section>
 
 <section class="sec" aria-labelledby="story-title">
 <div class="wrap story">
 <div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><clipPath id="gorro" clipPathUnits="objectBoundingBox"><path d="M.16 .66 C.03 .62 0 .45 .08 .35 C.15 .26 .27 .26 .33 .31 C.35 .12 .58 .04 .67 .2 C.79 .1 .98 .2 .95 .38 C1 .47 .97 .6 .86 .66 L.86 .96 C.86 .98 .84 1 .82 1 L.2 1 C.18 1 .16 .98 .16 .96 Z"/></clipPath></defs></svg>
-<div class="ph hatclip rv"><img class="px" src="https://images.unsplash.com/photo-1612884610549-ce221d92514a?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Manos amasando sobre una mesa de madera enharinada" loading="lazy"></div>
+<div class="ph hatclip rv"><Foto class="px" image={p.historiaFoto} w={1000} loading="lazy" /></div>
 </div>
 <div>
-<p class="eyebrow rv" id="story-title">Nuestra historia</p>
-<blockquote class="serif quote" data-split>“Todo empezó en una cocina pequeña, con la receta de la abuela y un horno que no <em class="accent">cerraba bien.”</em></blockquote>
-<p class="lead rv">Lo que comenzó como pedidos para amigos y vecinos hoy es un equipo que cocina para bodas, empresas y cenas íntimas. La receta sigue siendo la misma: hacerlo todo con las manos y con calma.</p>
-<a class="link rv" href="/nosotros">Conoce cómo empezó <i class="arr"></i></a>
+<p class="eyebrow rv" id="story-title">{p.historiaEtiqueta}</p>
+<blockquote class="serif quote" data-split><Frase value={p.historiaCita} /></blockquote>
+<p class="lead rv">{p.historiaTexto}</p>
+<a class="link rv" href="/nosotros">{p.historiaEnlace} <i class="arr"></i></a>
 </div>
 </div>
 </section>
@@ -142,9 +123,9 @@ import Layout from '../layouts/Layout.astro';
 <div class="cta-bg"></div>
 <div class="wrap">
 <svg class="hat hat-draw" viewBox="0 0 200 170" aria-hidden="true"><use href="#hat"/></svg>
-<h2 id="cta-title" class="serif h-xl lines"><span class="ln"><span>¿Tienes una fecha</span></span><span class="ln"><span>especial <em>en mente?</em></span></span></h2>
-<p class="rv">Responde 7 preguntas rápidas y te escribimos por WhatsApp con una propuesta hecha para ti.</p>
-<a class="btn rv" href="/contacto">Empezar el quiz <i class="arr"></i></a>
+<h2 id="cta-title" class="serif h-xl lines"><Titular value={p.finalTitulo} /></h2>
+<p class="rv">{p.finalTexto}</p>
+<a class="btn rv" href="/contacto">{p.finalBoton} <i class="arr"></i></a>
 </div>
 </section>
 </Layout>

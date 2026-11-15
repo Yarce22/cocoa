@@ -1,0 +1,7 @@
+---
+import type { Frase } from '../lib/sanity';
+/** Sentence ending with a highlighted `<em class="accent">` part. */
+interface Props { value?: Frase | null }
+const { value } = Astro.props;
+---
+{value?.texto}{value?.texto && value?.resaltado ? ' ' : ''}{value?.resaltado && <em class="accent">{value.resaltado}</em>}

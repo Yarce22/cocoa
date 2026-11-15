@@ -1,5 +1,16 @@
 (() => {
-  const WA = '573000000000'; // TODO: replace with Cocoa's real WhatsApp number (digits only, with country code)
+  // Content comes from Sanity, emitted by the page as JSON (see src/pages/contacto.astro).
+  const D = JSON.parse(document.getElementById('quiz-data')?.textContent || '{}');
+  const WA = D.wa || '';
+  const Q = { fecha: D.fecha || {}, lugar: D.lugar || {}, notas: D.notas || {}, nombre: D.nombre || {} };
+  // Button and label texts ("Botones y textos" in Sanity); empty values fall back to the original wording.
+  const T = Object.assign({}, {
+    paso: 'Paso {n} de {total}', resumen: 'Resumen', pregunta: 'Pregunta', opcional: 'Opcional', ultima: 'Última',
+    siguiente: 'Siguiente', omitir: 'Omitir', verResumen: 'Ver resumen', todoListo: 'Todo listo', editar: 'Editar',
+    vistaPrevia: 'Vista previa del mensaje', enviar: 'Enviar por WhatsApp', horario: 'Te respondemos en horario de 8:00 a. m. a 6:00 p. m.',
+    servicio: 'Servicio', ocasion: 'Ocasión', personas: 'Personas', fecha: 'Fecha', lugar: 'Lugar', detalles: 'Detalles',
+    sinDetalles: 'Sin detalles adicionales', nombre: 'Nombre',
+  }, Object.fromEntries(Object.entries(D.ui || {}).filter(([, v]) => typeof v === 'string' && v.trim())));
 
   const P = {
     cloche: 'M3 18h18M5 18a7 7 0 0 1 14 0M12 11V9M10.5 9h3',
@@ -18,12 +29,11 @@
     cal: 'M5 5h14a1.5 1.5 0 0 1 1.5 1.5V18.500a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V6.5A1.5 1.5 0 0 1 5 5zM3.5 10h17M8 3v4M16 3v4',
     calq: 'M5 5h14a1.5 1.5 0 0 1 1.5 1.5V18.500a1.5 1.5 0 0 1-1.5 1.5H5a1.5 1.5 0 0 1-1.5-1.5V6.5A1.5 1.5 0 0 1 5 5zM8 3v4M16 3v4M10.2 12.2a1.9 1.9 0 1 1 2.6 1.7c-.5.2-.8.6-.8 1.1M12 17.600h.01',
   };
-  const CHOICES = [
-    { key: 'servicio', title: '¿Qué estás buscando?', hint: 'Elige la opción que más se parezca a lo que tienes en mente.', opts: [['Catering', 'Menú completo para tu evento', P.cloche], ['Repostería', 'Tortas, postres y mesas de dulces', P.cake], ['Chef privado', 'Una cena especial en tu casa', P.hat], ['No estoy seguro', 'Te ayudamos a decidir', P.question]] },
-    { key: 'ocasion', title: '¿Qué tipo de ocasión es?', hint: 'Así sabemos el tono y el estilo de la propuesta.', opts: [['Boda', 'Matrimonio, pedida o aniversario', P.rings], ['Cumpleaños', 'De 1 a 100 años', P.balloon], ['Evento corporativo', 'Reuniones, lanzamientos, fin de año', P.briefcase], ['Reunión íntima', 'Cena o encuentro en casa', P.wine], ['Otro', 'Cuéntanos más adelante', P.sparkle]] },
-    { key: 'personas', title: '¿Para cuántas personas?', hint: 'Un aproximado está perfecto.', opts: [['Hasta 10', 'Algo íntimo', P.p1], ['11–30', 'Reunión mediana', P.p2], ['31–80', 'Celebración grande', P.p3], ['Más de 80', 'Gran evento', P.p4]] },
-  ];
-  const CITIES = ['Pereira', 'Dosquebradas', 'Santa Rosa de Cabal', 'Armenia', 'Manizales'];
+  const CHOICES = ['servicio', 'ocasion', 'personas'].map((key, n) => {
+    const q = (D.choices || [])[n] || {};
+    return { key, title: q.title || '', hint: q.hint || '', opts: (q.opts || []).map(([label, sub, ic]) => [label, sub, P[ic] || P.sparkle]) };
+  });
+  const CITIES = Q.lugar.ciudades || [];
   const MONTHS = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   const SUMMARY = 7;
 
@@ -37,61 +47,62 @@
   const host = $('#q-step'), back = $('#q-back');
 
   const fechaTxt = () => {
-    if (a.sinFecha) return 'Aún no la defino';
+    if (a.sinFecha) return Q.fecha.sinFecha || '';
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.fecha);
     return m ? `${+m[3]} de ${MONTHS[+m[2] - 1]} de ${m[1]}` : '';
   };
   const valid = () => [!!a.servicio, !!a.ocasion, !!a.personas, a.sinFecha || !!a.fecha, a.lugar.trim().length > 1, true, a.nombre.trim().length > 0][step];
   const message = () => {
-    const lines = [`Hola, Cocoa. Soy ${a.nombre.trim() || '—'} y quiero cotizar un evento.`, '',
-      `• Servicio: ${a.servicio || '—'}`, `• Ocasión: ${a.ocasion || '—'}`, `• Personas: ${a.personas || '—'}`,
-      `• Fecha: ${fechaTxt() || '—'}`, `• Lugar: ${a.lugar.trim() || '—'}`];
-    if (a.notas.trim()) lines.push(`• Detalles: ${a.notas.trim()}`);
-    return [...lines, '', 'Quedo pendiente de su propuesta. ¡Gracias!'].join('\n');
+    const lines = [(D.saludo || '').split('{nombre}').join(a.nombre.trim() || '—'), '',
+      `• ${T.servicio}: ${a.servicio || '—'}`, `• ${T.ocasion}: ${a.ocasion || '—'}`, `• ${T.personas}: ${a.personas || '—'}`,
+      `• ${T.fecha}: ${fechaTxt() || '—'}`, `• ${T.lugar}: ${a.lugar.trim() || '—'}`];
+    if (a.notas.trim()) lines.push(`• ${T.detalles}: ${a.notas.trim()}`);
+    return [...lines, '', D.despedida || ''].join('\n');
   };
 
   const head = (num, title, hint, forId) => `<p class="eyebrow">${num}</p>
 <h2 class="serif">${forId ? `<label for="${forId}">${title}</label>` : title}</h2><p class="hint">${hint}</p>`;
-  const nextBtn = (label = 'Siguiente', extra = '') => `<div class="q-actions"><button type="button" class="btn" data-act="next">${label} <i class="arr"></i></button>${extra}</div>`;
+  const num = (n, mark) => `${esc(T.pregunta)} 0${n}${mark ? ` · ${esc(mark)}` : ''}`;
+  const nextBtn = (label = esc(T.siguiente), extra = '') => `<div class="q-actions"><button type="button" class="btn" data-act="next">${label} <i class="arr"></i></button>${extra}</div>`;
 
   const views = [
-    ...CHOICES.map((q, n) => () => `${head(`Pregunta 0${n + 1}`, q.title, q.hint)}
-<div class="opts" role="radiogroup" aria-label="${q.title}">${q.opts.map(([label, sub, d], i) => `<button type="button" role="radio" aria-checked="${a[q.key] === label}" class="opt${a[q.key] === label ? ' sel' : ''}" style="--n:${i}" data-pick="${label}"><span class="ic">${icon(d)}</span>${CHECK}<b>${label}</b><small>${sub}</small></button>`).join('')}</div>`),
+    ...CHOICES.map((q, n) => () => `${head(num(n + 1), esc(q.title), esc(q.hint))}
+<div class="opts" role="radiogroup" aria-label="${esc(q.title)}">${q.opts.map(([label, sub, d], i) => `<button type="button" role="radio" aria-checked="${a[q.key] === label}" class="opt${a[q.key] === label ? ' sel' : ''}" style="--n:${i}" data-pick="${esc(label)}"><span class="ic">${icon(d)}</span>${CHECK}<b>${esc(label)}</b><small>${esc(sub)}</small></button>`).join('')}</div>`),
     () => {
       const t = new Date(), today = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')}`;
-      return `${head('Pregunta 04', '¿Qué fecha tienes en mente?', 'Si aún no es seguro, no pasa nada: podemos ayudarte a elegirla.')}
+      return `${head(num(4), esc(Q.fecha.titulo || ''), esc(Q.fecha.ayuda || ''))}
 <div class="date-grid">
-<label class="date-card"><span><span class="ic">${icon(P.cal, 24)}</span>Elegir fecha</span><input class="field" type="date" data-k="fecha" value="${esc(a.fecha)}" min="${today}"></label>
-<button type="button" class="opt${a.sinFecha ? ' sel' : ''}" aria-pressed="${a.sinFecha}" data-act="nodate"><span class="ic">${icon(P.calq)}</span>${CHECK}<b>Aún no la defino</b><small>Te sugerimos fechas disponibles.</small></button>
+<label class="date-card"><span><span class="ic">${icon(P.cal, 24)}</span>${esc(Q.fecha.elegir || '')}</span><input class="field" type="date" data-k="fecha" value="${esc(a.fecha)}" min="${today}"></label>
+<button type="button" class="opt${a.sinFecha ? ' sel' : ''}" aria-pressed="${a.sinFecha}" data-act="nodate"><span class="ic">${icon(P.calq)}</span>${CHECK}<b>${esc(Q.fecha.sinFecha || '')}</b><small>${esc(Q.fecha.sinFechaDetalle || '')}</small></button>
 </div>${nextBtn()}`;
     },
-    () => `${head('Pregunta 05', '¿En qué ciudad o lugar será?', 'Ciudad, barrio, finca o salón. Atendemos todo el Eje Cafetero.', 'q-lugar')}
-<input id="q-lugar" class="field" type="text" data-k="lugar" placeholder="Ej: Finca en Santa Rosa de Cabal" value="${esc(a.lugar)}" autocomplete="address-level2" enterkeyhint="next">
-<div class="qchips">${CITIES.map((c) => `<button type="button" class="qchip" data-city="${c}">${c}</button>`).join('')}</div>${nextBtn()}`,
-    () => `${head('Pregunta 06 · Opcional', '¿Algo que debamos saber?', 'Gustos, restricciones alimentarias (vegetariano, sin gluten, alergias), colores o la idea que tengas.', 'q-notas')}
-<textarea id="q-notas" class="field" data-k="notas" placeholder="Ej: Somos 4 vegetarianos. Nos encanta el maracuyá y queremos una mesa de dulces en tonos tierra.">${esc(a.notas)}</textarea>${nextBtn('Siguiente', '<button type="button" class="q-skip" data-act="skip">Omitir</button>')}`,
-    () => `${head('Pregunta 07 · Última', '¿Cómo te llamas?', 'Para saber con quién vamos a hablar.', 'q-nombre')}
-<input id="q-nombre" class="field" type="text" data-k="nombre" placeholder="Tu nombre" value="${esc(a.nombre)}" autocomplete="name" enterkeyhint="done">${nextBtn('Ver resumen')}`,
+    () => `${head(num(5), esc(Q.lugar.titulo || ''), esc(Q.lugar.ayuda || ''), 'q-lugar')}
+<input id="q-lugar" class="field" type="text" data-k="lugar" placeholder="${esc(Q.lugar.ejemplo || '')}" value="${esc(a.lugar)}" autocomplete="address-level2" enterkeyhint="next">
+<div class="qchips">${CITIES.map((c) => `<button type="button" class="qchip" data-city="${esc(c)}">${esc(c)}</button>`).join('')}</div>${nextBtn()}`,
+    () => `${head(num(6, T.opcional), esc(Q.notas.titulo || ''), esc(Q.notas.ayuda || ''), 'q-notas')}
+<textarea id="q-notas" class="field" data-k="notas" placeholder="${esc(Q.notas.ejemplo || '')}">${esc(a.notas)}</textarea>${nextBtn(esc(T.siguiente), `<button type="button" class="q-skip" data-act="skip">${esc(T.omitir)}</button>`)}`,
+    () => `${head(num(7, T.ultima), esc(Q.nombre.titulo || ''), esc(Q.nombre.ayuda || ''), 'q-nombre')}
+<input id="q-nombre" class="field" type="text" data-k="nombre" placeholder="${esc(Q.nombre.ejemplo || '')}" value="${esc(a.nombre)}" autocomplete="name" enterkeyhint="done">${nextBtn(esc(T.verResumen))}`,
     () => {
-      const rows = [['Servicio', a.servicio], ['Ocasión', a.ocasion], ['Personas', a.personas], ['Fecha', fechaTxt()], ['Lugar', a.lugar], ['Detalles', a.notas || 'Sin detalles adicionales'], ['Nombre', a.nombre]];
+      const rows = [[T.servicio, a.servicio], [T.ocasion, a.ocasion], [T.personas, a.personas], [T.fecha, fechaTxt()], [T.lugar, a.lugar], [T.detalles, a.notas || T.sinDetalles], [T.nombre, a.nombre]];
       const name = a.nombre.trim();
-      return `<p class="eyebrow">Todo listo</p><h2 class="serif">¡Gracias${name ? `, ${esc(name)}` : ''}! Este es tu evento</h2>
-<p class="hint">Revisa tus respuestas. Al tocar el botón se abre WhatsApp con este mensaje listo para enviar.</p>
-<div class="sumgrid"><div>${rows.map(([k, v], i) => `<div class="sumrow"><span class="k">${k}</span><span class="v">${esc(v || '—')}</span><button type="button" class="q-edit" data-go="${i}" aria-label="Editar ${k.toLowerCase()}">Editar</button></div>`).join('')}</div>
-<div class="send"><div class="chat"><div class="chat-head"><img src="assets/img/logos/logo-badge-cream.svg" alt="" width="40" height="40"><span>Cocoa · Pastelería &amp; Catering<small>Vista previa del mensaje</small></span></div>
+      return `<p class="eyebrow">${esc(T.todoListo)}</p><h2 class="serif">¡Gracias${name ? `, ${esc(name)}` : ''}! ${esc(D.resumenTitulo || '')}</h2>
+<p class="hint">${esc(D.resumenTexto || '')}</p>
+<div class="sumgrid"><div>${rows.map(([k, v], i) => `<div class="sumrow"><span class="k">${esc(k)}</span><span class="v">${esc(v || '—')}</span><button type="button" class="q-edit" data-go="${i}" aria-label="Editar ${esc(k.toLowerCase())}">${esc(T.editar)}</button></div>`).join('')}</div>
+<div class="send"><div class="chat"><div class="chat-head"><img src="assets/img/logos/logo-badge-cream.svg" alt="" width="40" height="40"><span>Cocoa · Pastelería &amp; Catering<small>${esc(T.vistaPrevia)}</small></span></div>
 <div class="bubble">${esc(message())}<small>ahora ✓✓</small></div></div>
-<a class="btn wa" href="https://wa.me/${WA}?text=${encodeURIComponent(message())}" target="_blank" rel="noopener"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#wa"/></svg>Enviar por WhatsApp</a>
-<p>Te respondemos en horario de 8:00 a. m. a 6:00 p. m.</p></div></div>`;
+<a class="btn wa" href="https://wa.me/${WA}?text=${encodeURIComponent(message())}" target="_blank" rel="noopener"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#wa"/></svg>${esc(T.enviar)}</a>
+<p>${esc(T.horario)}</p></div></div>`;
     },
   ];
 
   const syncChrome = () => {
     back.disabled = step === 0;
-    $('#q-label').textContent = step < SUMMARY ? `Paso ${step + 1} de 7` : 'Resumen';
+    $('#q-label').textContent = step < SUMMARY ? T.paso.split('{n}').join(step + 1).split('{total}').join(7) : T.resumen;
     $('#q-bar').setAttribute('aria-valuenow', step);
     document.querySelectorAll('.seg').forEach((s, i) => s.classList.toggle('on', i <= step));
     const chips = [a.servicio, a.ocasion, a.personas && `${a.personas} personas`, step > 3 && fechaTxt(), step > 4 && a.lugar.trim(), step > 6 && a.nombre.trim()].filter(Boolean);
-    $('#q-chips').innerHTML = chips.length ? chips.map((c) => `<span class="chip">${esc(c)}</span>`).join('') : '<p>Aquí irán apareciendo tus respuestas.</p>';
+    $('#q-chips').innerHTML = chips.length ? chips.map((c) => `<span class="chip">${esc(c)}</span>`).join('') : `<p>${esc(D.vacio || '')}</p>`;
     const next = host.querySelector('[data-act="next"]');
     if (next) next.disabled = !valid();
   };

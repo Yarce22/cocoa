@@ -12,7 +12,7 @@ export default defineConfig({
   trailingSlash: 'never',
   integrations: [
     sanity({
-      projectId: PUBLIC_SANITY_PROJECT_ID,
+      projectId: PUBLIC_SANITY_PROJECT_ID || 'placeholder', // lets the build run before keys exist; src/lib/sanity.ts skips fetching then
       dataset: PUBLIC_SANITY_DATASET || 'production',
       useCdn: false, // static build: always read fresh content at build time
       apiVersion: '2025-01-01',

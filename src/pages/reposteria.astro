@@ -1,14 +1,34 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Titular from '../components/Titular.astro';
+import Foto from '../components/Foto.astro';
+import { getCategories, getDesserts, getPage, jsonForScript, urlFor } from '../lib/sanity';
+const p = (await getPage('reposteria')) ?? {};
+const [postres, categorias] = await Promise.all([getDesserts(), getCategories()]);
+const gallery = {
+  filters: [['todo', p.filtroTodo ?? ''], ...categorias.map((c) => [c._id, c.nombreFiltro || c.nombre || ''])],
+  contador: [p.contadorUno || 'creación', p.contadorVarios || 'creaciones'],
+  items: postres.map((d) => ({
+    cat: d.categoria?._id ?? '',
+    catName: d.categoria?.nombre ?? '',
+    shape: `${d.alto ?? 't2'}${d.arco ? ' r' : ''}`,
+    src: urlFor(d.foto, 600),
+    full: urlFor(d.foto, 1200),
+    alt: d.foto?.alt || d.nombre || '',
+    name: d.nombre ?? '',
+    desc: d.descripcion ?? '',
+    detail: d.detalle ?? '',
+  })),
+};
 ---
-<Layout title="Repostería por encargo · Cocoa" description="Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración." mainClass="inner" scripts={["gallery"]}>
+<Layout seo={p.seo} title="Repostería por encargo · Cocoa" description="Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración." mainClass="inner" scripts={["gallery"]}>
 <section class="page-head" style="padding-bottom:40px">
 <div class="wrap grid">
 <div>
-<p class="eyebrow rv">Repostería por encargo</p>
-<h1 class="serif h-xl lines"><span class="ln"><span>El amor</span></span><span class="ln"><span><em class="accent">es dulce</em></span></span></h1>
+<p class="eyebrow rv">{p.etiqueta}</p>
+<h1 class="serif h-xl lines"><Titular value={p.titulo} em="accent" /></h1>
 </div>
-<p class="lead rv">Tortas, postres individuales, galletas y mesas de dulces horneados a mano con mantequilla, cacao y frutas de la región. Toca cualquier foto para ver el detalle.</p>
+<p class="lead rv">{p.texto}</p>
 </div>
 </section>
 
@@ -23,12 +43,12 @@ import Layout from '../layouts/Layout.astro';
 
 <section class="sec dark round-top" aria-labelledby="cta-h">
 <div class="wrap order">
-<div class="ph arch unmask"><img class="px" src="https://images.unsplash.com/photo-1777647322811-af273ac27c29?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Masa de chocolate vertiéndose en un molde para hornear" loading="lazy"></div>
+<div class="ph arch unmask"><Foto class="px" image={p.finalFoto} w={1000} loading="lazy" /></div>
 <div>
-<p class="eyebrow rv">Pedidos personalizados</p>
-<h2 id="cta-h" class="serif h-l lines"><span class="ln"><span>¿Tienes una idea?</span></span><span class="ln"><span><em>La horneamos.</em></span></span></h2>
-<p class="lead rv">Cuéntanos sabores, colores, número de porciones y la fecha. Te respondemos por WhatsApp con opciones y precio. Recomendamos pedir con al menos 5 días de anticipación.</p>
-<a class="btn light rv" href="/contacto">Diseñar mi pedido <i class="arr"></i></a>
+<p class="eyebrow rv">{p.finalEtiqueta}</p>
+<h2 id="cta-h" class="serif h-l lines"><Titular value={p.finalTitulo} /></h2>
+<p class="lead rv">{p.finalTexto}</p>
+<a class="btn light rv" href="/contacto">{p.finalBoton} <i class="arr"></i></a>
 </div>
 </div>
 </section>
@@ -45,7 +65,7 @@ import Layout from '../layouts/Layout.astro';
 <p id="lb-desc"></p>
 <p class="lb-detail" id="lb-detail"></p>
 <div class="lb-foot">
-<a class="btn" href="/contacto" style="min-height:50px;padding:0 22px;font-size:12px">Pedir algo así</a>
+<a class="btn" href="/contacto" style="min-height:50px;padding:0 22px;font-size:12px">{p.botonPedir}</a>
 <div style="display:flex;gap:8px">
 <button type="button" class="icon-btn" data-lb="prev" aria-label="Foto anterior"><i class="arr back"></i></button>
 <button type="button" class="icon-btn" data-lb="next" aria-label="Foto siguiente"><i class="arr"></i></button>
@@ -54,5 +74,6 @@ import Layout from '../layouts/Layout.astro';
 </div>
 </div>
 </dialog>
+<script is:inline type="application/json" id="gallery-data" set:html={jsonForScript(gallery)}></script>
 </Fragment>
 </Layout>

@@ -1,29 +1,55 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { getPage, getSettings, jsonForScript } from '../lib/sanity';
+const p = (await getPage('contacto')) ?? {};
+const s = (await getSettings()) ?? {};
+const ui = p.interfaz ?? {};
+const paso1 = (ui.paso || 'Paso {n} de {total}').split('{n}').join('1').split('{total}').join('7');
+const quiz = {
+  wa: s.whatsapp ?? '',
+  vacio: p.respuestasVacio ?? '',
+  choices: (p.opciones ?? []).map((q) => ({
+    title: q.titulo ?? '',
+    hint: q.ayuda ?? '',
+    opts: (q.opciones ?? []).map((o) => [o.texto ?? '', o.detalle ?? '', o.icono ?? 'sparkle']),
+  })),
+  fecha: p.fecha ?? {},
+  lugar: p.lugar ?? {},
+  notas: p.notas ?? {},
+  nombre: p.nombre ?? {},
+  resumenTitulo: p.resumenTitulo ?? '',
+  resumenTexto: p.resumenTexto ?? '',
+  saludo: p.saludo ?? '',
+  despedida: p.despedida ?? '',
+  ui,
+};
 ---
-<Layout title="Cotiza tu evento · Cocoa" description="Responde 7 preguntas rápidas y envíanos tu evento por WhatsApp. Te respondemos con una propuesta hecha para ti." bodyClass="quiz" mainClass="inner" scripts={["quiz"]}>
+<Layout seo={p.seo} title="Cotiza tu evento · Cocoa" description="Responde 7 preguntas rápidas y envíanos tu evento por WhatsApp. Te respondemos con una propuesta hecha para ti." bodyClass="quiz" mainClass="inner" scripts={["quiz"]}>
 <div class="qz">
 <aside class="aside" aria-label="Resumen del quiz">
 <svg class="hat hat-draw" viewBox="0 0 200 170" aria-hidden="true"><use href="#hat"/></svg>
-<h1 class="serif">Cuéntanos tu evento</h1>
-<p>7 preguntas rápidas. Al final te mostramos el mensaje y lo envías por WhatsApp.</p>
+<h1 class="serif">{p.titulo}</h1>
+<p>{p.texto}</p>
 <div class="aside-long">
-<p class="cap-s">Tu evento hasta ahora</p>
-<div class="chips" id="q-chips"><p>Aquí irán apareciendo tus respuestas.</p></div>
+<p class="cap-s">{p.respuestasTitulo}</p>
+<div class="chips" id="q-chips"><p>{p.respuestasVacio}</p></div>
 </div>
 </aside>
 
 <section aria-label="Quiz de cotización">
 <div class="qz-top">
-<button type="button" class="q-back" id="q-back" disabled><i class="arr back"></i>Atrás</button>
-<span class="q-label" id="q-label" aria-live="polite">Paso 1 de 7</span>
+<button type="button" class="q-back" id="q-back" disabled><i class="arr back"></i>{ui.atras || 'Atrás'}</button>
+<span class="q-label" id="q-label" aria-live="polite">{paso1}</span>
 </div>
 <div class="bar" id="q-bar" role="progressbar" aria-label="Progreso del quiz" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
 <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
 </div>
 <div id="q-step">
-<noscript><p class="lead">El quiz necesita JavaScript. También puedes <a href="https://wa.me/573000000000">escribirnos directo por WhatsApp</a>.</p></noscript>
+<noscript><p class="lead">El quiz necesita JavaScript. También puedes <a href={`https://wa.me/${s.whatsapp ?? ''}`}>escribirnos directo por WhatsApp</a>.</p></noscript>
 </div>
 </section>
 </div>
+<Fragment slot="after">
+<script is:inline type="application/json" id="quiz-data" set:html={jsonForScript(quiz)}></script>
+</Fragment>
 </Layout>
