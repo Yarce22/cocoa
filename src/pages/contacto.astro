@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Cotiza tu evento · Cocoa" description="Responde 7 preguntas rápidas y envíanos tu evento por WhatsApp. Te respondemos con una propuesta hecha para ti." bodyClass="quiz" mainClass="inner" scripts={["quiz"]}>
+<div class="qz">
+<aside class="aside" aria-label="Resumen del quiz">
+<svg class="hat hat-draw" viewBox="0 0 200 170" aria-hidden="true"><use href="#hat"/></svg>
+<h1 class="serif">Cuéntanos tu evento</h1>
+<p>7 preguntas rápidas. Al final te mostramos el mensaje y lo envías por WhatsApp.</p>
+<div class="aside-long">
+<p class="cap-s">Tu evento hasta ahora</p>
+<div class="chips" id="q-chips"><p>Aquí irán apareciendo tus respuestas.</p></div>
+</div>
+</aside>
+
+<section aria-label="Quiz de cotización">
+<div class="qz-top">
+<button type="button" class="q-back" id="q-back" disabled><i class="arr back"></i>Atrás</button>
+<span class="q-label" id="q-label" aria-live="polite">Paso 1 de 7</span>
+</div>
+<div class="bar" id="q-bar" role="progressbar" aria-label="Progreso del quiz" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
+<span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
+</div>
+<div id="q-step">
+<noscript><p class="lead">El quiz necesita JavaScript. También puedes <a href="https://wa.me/573000000000">escribirnos directo por WhatsApp</a>.</p></noscript>
+</div>
+</section>
+</div>
+</Layout>

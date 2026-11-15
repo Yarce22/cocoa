@@ -6,7 +6,7 @@
 
   /* ---- nav, mobile menu, floating button ---- */
   const nav = $('.nav'), burger = $('.burger'), menu = $('.mmenu'), fab = $('.fab');
-  const here = location.pathname.split('/').pop() || 'index.html';
+  const here = location.pathname.replace(/\/$/, '') || '/';
   $$('.nl, .ml').forEach((a) => a.getAttribute('href') === here && a.setAttribute('aria-current', 'page'));
 
   const setMenu = (open) => {
