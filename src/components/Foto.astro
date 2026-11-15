@@ -1,0 +1,20 @@
+---
+import { hasImage, srcsetFor, urlFor, type Foto } from '../lib/sanity';
+/** Sanity image as a plain <img>; the page keeps its own `.ph` wrappers. */
+interface Props {
+  image?: Foto | null;
+  w: number;
+  h?: number;
+  widths?: number[];
+  sizes?: string;
+  alt?: string;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  class?: string;
+  style?: string;
+}
+const { image, w, h, widths, sizes, alt, loading, fetchpriority, class: cls, style } = Astro.props;
+const src = urlFor(image, w, h);
+const srcset = widths ? srcsetFor(image, widths) : undefined;
+---
+{hasImage(image) && <img class={cls} src={src} srcset={srcset} sizes={sizes} alt={alt ?? image.alt ?? ''} loading={loading} fetchpriority={fetchpriority} style={style}>}

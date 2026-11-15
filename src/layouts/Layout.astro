@@ -1,6 +1,12 @@
 ---
-interface Props { title: string; description: string; bodyClass?: string; mainClass?: string; scripts?: string[] }
-const { title, description, bodyClass, mainClass, scripts = [] } = Astro.props;
+import Titular from '../components/Titular.astro';
+import { getSettings, type Seo } from '../lib/sanity';
+interface Props { title: string; description: string; seo?: Seo | null; bodyClass?: string; mainClass?: string; scripts?: string[] }
+const { seo, bodyClass, mainClass, scripts = [] } = Astro.props;
+const title = seo?.titulo || Astro.props.title;
+const description = seo?.descripcion || Astro.props.description;
+const s = (await getSettings()) ?? {};
+const wa = `https://wa.me/${s.whatsapp ?? ''}`;
 ---
 <!doctype html>
 <html lang="es-CO">
@@ -33,10 +39,10 @@ const { title, description, bodyClass, mainClass, scripts = [] } = Astro.props;
 <span><b>cocoa</b><small>Pastelería &amp; Catering</small></span>
 </a>
 <nav class="nav-links" aria-label="Principal">
-<a class="nl" href="/catering">Catering</a>
-<a class="nl" href="/reposteria">Repostería</a>
-<a class="nl" href="/nosotros">Nosotros</a>
-<a class="btn" href="/contacto">Cotiza tu evento</a>
+<a class="nl" href="/catering">{s.menuCatering}</a>
+<a class="nl" href="/reposteria">{s.menuReposteria}</a>
+<a class="nl" href="/nosotros">{s.menuNosotros}</a>
+<a class="btn" href="/contacto">{s.botonCotizar}</a>
 </nav>
 <button class="burger" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="mmenu"><i></i><i></i></button>
 </div>
@@ -44,14 +50,14 @@ const { title, description, bodyClass, mainClass, scripts = [] } = Astro.props;
 
 <nav class="mmenu" id="mmenu" aria-label="Menú móvil" inert>
 <ul>
-<li><a class="ml" style="--n:0" href="/"><small>01</small><span>Inicio</span></a></li>
-<li><a class="ml" style="--n:1" href="/catering"><small>02</small><span>Catering</span></a></li>
-<li><a class="ml" style="--n:2" href="/reposteria"><small>03</small><span>Repostería</span></a></li>
-<li><a class="ml" style="--n:3" href="/nosotros"><small>04</small><span>Nosotros</span></a></li>
+<li><a class="ml" style="--n:0" href="/"><small>01</small><span>{s.menuInicio}</span></a></li>
+<li><a class="ml" style="--n:1" href="/catering"><small>02</small><span>{s.menuCatering}</span></a></li>
+<li><a class="ml" style="--n:2" href="/reposteria"><small>03</small><span>{s.menuReposteria}</span></a></li>
+<li><a class="ml" style="--n:3" href="/nosotros"><small>04</small><span>{s.menuNosotros}</span></a></li>
 </ul>
 <div class="mmenu-foot">
-<a class="btn light" href="/contacto">Cotiza tu evento <i class="arr"></i></a>
-<p><a href="https://wa.me/573000000000">WhatsApp +57 300 000 0000</a> · Pereira, Risaralda</p>
+<a class="btn light" href="/contacto">{s.botonCotizar} <i class="arr"></i></a>
+<p><a href={wa}>WhatsApp {s.whatsappVisible}</a> · {s.ciudadCorta}</p>
 </div>
 </nav>
 
@@ -63,52 +69,52 @@ const { title, description, bodyClass, mainClass, scripts = [] } = Astro.props;
 <footer class="ft">
 <div class="wrap">
 <div class="ft-top">
-<p class="ft-big serif lines"><span class="ln"><span>Endulcemos tu próxima</span></span><span class="ln"><span><em>celebración.</em></span></span></p>
-<a class="btn light rv" href="/contacto">Cotiza tu evento <i class="arr"></i></a>
+<p class="ft-big serif lines"><Titular value={s.pieTitulo} /></p>
+<a class="btn light rv" href="/contacto">{s.botonCotizar} <i class="arr"></i></a>
 </div>
 <div class="ft-grid">
 <div class="ft-brand rv">
 <img src="/assets/img/logos/logo-white.svg" alt="Cocoa Pastelería &amp; Catering" width="200" height="102" loading="lazy">
-<p>Catering, repostería y chef privado hechos a mano para celebraciones, empresas y cenas en casa.</p>
+<p>{s.pieDescripcion}</p>
 </div>
 <div class="rv">
-<p class="ft-h">Explora</p>
+<p class="ft-h">{s.pieExplora}</p>
 <ul class="ft-list">
-<li><a href="/catering">Catering</a></li>
-<li><a href="/reposteria">Repostería</a></li>
-<li><a href="/nosotros">Nosotros</a></li>
-<li><a href="/contacto">Cotiza tu evento</a></li>
+<li><a href="/catering">{s.menuCatering}</a></li>
+<li><a href="/reposteria">{s.menuReposteria}</a></li>
+<li><a href="/nosotros">{s.menuNosotros}</a></li>
+<li><a href="/contacto">{s.botonCotizar}</a></li>
 </ul>
 </div>
 <div class="rv">
-<p class="ft-h">Hablemos</p>
+<p class="ft-h">{s.pieHablemos}</p>
 <ul class="ft-list">
-<li><a href="https://wa.me/573000000000">WhatsApp +57 300 000 0000</a></li>
-<li><a href="mailto:hola@cocoa.com.co">hola@cocoa.com.co</a></li>
-<li class="dim">Pereira, Risaralda · Colombia</li>
-<li class="dim">Pedidos con 5 días de anticipación</li>
+<li><a href={wa}>WhatsApp {s.whatsappVisible}</a></li>
+{s.email && <li><a href={`mailto:${s.email}`}>{s.email}</a></li>}
+{s.ciudad && <li class="dim">{s.ciudad}</li>}
+{s.nota && <li class="dim">{s.nota}</li>}
 </ul>
 </div>
 <div class="ft-brand rv">
-<p class="ft-h" style="margin:0">Síguenos</p>
+<p class="ft-h" style="margin:0">{s.pieSiguenos}</p>
 <div class="socs">
-<a class="soc" href="https://instagram.com/" aria-label="Instagram de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></svg></a>
-<a class="soc" href="https://tiktok.com/" aria-label="TikTok de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg></a>
-<a class="soc" href="https://facebook.com/" aria-label="Facebook de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14.5 21v-8h2.7l.4-3.2h-3.1V7.9c0-.9.3-1.6 1.6-1.6h1.6V3.5c-.8-.1-1.6-.2-2.4-.2-2.4 0-4 1.5-4 4.1v2.4H8.6V13h2.7v8"/></svg></a>
+{s.instagram && <a class="soc" href={s.instagram} aria-label="Instagram de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".6"/></svg></a>}
+{s.tiktok && <a class="soc" href={s.tiktok} aria-label="TikTok de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5M14 3c.4 2.6 2.2 4.4 5 4.6"/></svg></a>}
+{s.facebook && <a class="soc" href={s.facebook} aria-label="Facebook de Cocoa"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M14.5 21v-8h2.7l.4-3.2h-3.1V7.9c0-.9.3-1.6 1.6-1.6h1.6V3.5c-.8-.1-1.6-.2-2.4-.2-2.4 0-4 1.5-4 4.1v2.4H8.6V13h2.7v8"/></svg></a>}
 </div>
-<p style="font-size:14px">@cocoa.pasteleria</p>
+<p style="font-size:14px">{s.usuarioRedes}</p>
 </div>
 </div>
 <p class="ft-word serif" aria-hidden="true">COCOA</p>
 <div class="ft-base">
-<span>© 2026 Cocoa · Pastelería &amp; Catering</span>
-<span>Hecho a mano en el Eje Cafetero</span>
+<span>{s.pieCopyright}</span>
+<span>{s.pieFirma}</span>
 </div>
 </div>
 </footer>
 
-<a class="fab" href="https://wa.me/573000000000" aria-label="Escríbenos por WhatsApp">
-<span class="fab-l">Escríbenos</span>
+<a class="fab" href={wa} aria-label={`${s.botonWhatsapp ?? ''} por WhatsApp`.trim()}>
+<span class="fab-l">{s.botonWhatsapp}</span>
 <span class="fab-c"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#wa"/></svg></span>
 </a>
 

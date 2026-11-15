@@ -1,14 +1,25 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Titular from '../components/Titular.astro';
+import Foto from '../components/Foto.astro';
+import { getPage, getTeam } from '../lib/sanity';
+const p = (await getPage('nosotros')) ?? {};
+const team = await getTeam();
+const ICONOS: Record<string, string> = {
+  gorro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M7 20c-2.5 0-4-2-3.5-4.5C4 13 6 12 7.5 12.5 7.5 9.5 10 7.5 12.5 8.5 14 6.5 18 7 18 10.5c2 .5 2.5 3.5 1 5L17.5 20z"></path><path d="M8 20h9.5"></path></svg>',
+  hoja: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 21c-4-3-7-6.5-7-10.5C5 7 8 4 12 3c4 1 7 4 7 7.5 0 4-3 7.5-7 10.5z"></path><path d="M12 21V9"></path><path d="M12 13l-3-2.5M12 16l3-2.5"></path></svg>',
+  reloj: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="12" cy="12" r="8.5"></circle><path d="M12 7v5l3 2"></path></svg>',
+  corazon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg>',
+};
 ---
-<Layout title="Nosotros · La historia de Cocoa" description="Cocoa nació entre recetas familiares y hornos prestados. Conoce nuestra historia, el equipo y los valores con los que cocinamos." mainClass="inner">
+<Layout seo={p.seo} title="Nosotros · La historia de Cocoa" description="Cocoa nació entre recetas familiares y hornos prestados. Conoce nuestra historia, el equipo y los valores con los que cocinamos." mainClass="inner">
 <section class="page-head">
 <div class="wrap grid">
 <div>
-<p class="eyebrow rv">Nosotros</p>
-<h1 class="serif h-xl lines"><span class="ln"><span>Cómo empezó</span></span><span class="ln"><span><em class="accent">este sueño</em></span></span></h1>
+<p class="eyebrow rv">{p.etiqueta}</p>
+<h1 class="serif h-xl lines"><Titular value={p.titulo} em="accent" /></h1>
 </div>
-<p class="lead rv">Cocoa nació entre recetas familiares, hornos prestados y muchas ganas de reunir a la gente alrededor de una buena mesa. Esta es nuestra historia, contada por momentos.</p>
+<p class="lead rv">{p.texto}</p>
 </div>
 </section>
 
@@ -17,41 +28,13 @@ import Layout from '../layouts/Layout.astro';
 <div class="tl">
 <div class="tl-line" aria-hidden="true"><div class="tl-fill" data-scrub="y"></div></div>
 
+{(p.momentos ?? []).map((m) => (
 <article class="ti">
 <span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">2012</p><h2 class="serif">La cocina de la abuela</h2><p>Los domingos se horneaba pan de queso y torta negra. Ahí aprendimos que una receta es, sobre todo, una excusa para reunirse.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1635341814289-55cf1490024c?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Pan artesanal espolvoreado con harina" loading="lazy"></div></div>
+<div class="t-text rv"><p class="serif yr">{m.anio}</p><h2 class="serif">{m.titulo}</h2><p>{m.texto}</p></div>
+<div class="t-media"><div class="ph r-l unmask"><Foto class="px" image={m.foto} w={900} loading="lazy" /></div></div>
 </article>
-
-<article class="ti">
-<span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">2017</p><h2 class="serif">Los primeros pedidos</h2><p>Una torta para el cumpleaños de una amiga se convirtió en diez pedidos al mes. Horneábamos de noche, después del trabajo.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1517427294546-5aa121f68e8a?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Torta de chocolate en porciones junto a un tenedor" loading="lazy"></div></div>
-</article>
-
-<article class="ti">
-<span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">2019</p><h2 class="serif">Nuestra primera boda</h2><p>Ciento veinte invitados, un horno prestado y la certeza de que esto era lo que queríamos hacer el resto de la vida.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1525257831700-183b9b8bf5c4?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Torta de bodas blanca de varios pisos con flores" loading="lazy"></div></div>
-</article>
-
-<article class="ti">
-<span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">2021</p><h2 class="serif">El obrador propio</h2><p>Abrimos nuestra propia cocina de producción y sumamos el catering salado al menú. Nació oficialmente Cocoa.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1761095596588-e85f6a028894?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Dos cocineros preparando comida en una cocina profesional" loading="lazy"></div></div>
-</article>
-
-<article class="ti">
-<span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">2023</p><h2 class="serif">La mesa llega a tu casa</h2><p>Lanzamos el servicio de chef privado: cenas de varios tiempos en la cocina de nuestros clientes.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1775513153018-0c7ac7899751?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Chef emplatando con pinzas un plato gourmet" loading="lazy"></div></div>
-</article>
-
-<article class="ti">
-<span class="dot" aria-hidden="true"></span>
-<div class="t-text rv"><p class="serif yr">Hoy</p><h2 class="serif">Un equipo, el mismo sueño</h2><p>Somos un equipo que cocina para bodas, empresas y cenas íntimas, con la misma receta del principio: hacerlo todo con las manos.</p></div>
-<div class="t-media"><div class="ph r-l unmask"><img class="px" src="https://images.unsplash.com/photo-1561940329-7382e6704231?auto=format&amp;fit=crop&amp;w=900&amp;q=70" alt="Bollería variada en bandejas de cerámica" loading="lazy"></div></div>
-</article>
+))}
 
 </div>
 </div>
@@ -61,39 +44,30 @@ import Layout from '../layouts/Layout.astro';
 <div class="wrap">
 <div class="split">
 <div>
-<p class="eyebrow rv">Las manos detrás de Cocoa</p>
-<h2 id="team-h" class="serif h-l lines" style="margin-top:18px"><span class="ln"><span>Un equipo</span></span><span class="ln"><span><em>pequeño y apasionado</em></span></span></h2>
+<p class="eyebrow rv">{p.equipoEtiqueta}</p>
+<h2 id="team-h" class="serif h-l lines" style="margin-top:18px"><Titular value={p.equipoTitulo} /></h2>
 </div>
-<p class="lead rv">Cocineros, pasteleros y anfitriones que disfrutan tanto como tú cuando una mesa queda perfecta.</p>
+<p class="lead rv">{p.equipoTexto}</p>
 </div>
 <div class="team">
+{team.map((m) => (
 <article class="member rv">
-<div class="arch"><svg class="hat hat-draw" viewBox="0 0 200 170" role="img" aria-label="Retrato pendiente"><use href="#hat"/></svg></div>
-<div><h3 class="serif">[Nombre de la fundadora]</h3><p class="role">Fundadora · Pastelera</p><p>Aprendió a hornear con su abuela y convirtió esa herencia en Cocoa. Diseña cada torta y cada mesa de dulces.</p></div>
+<div class="arch">{m.foto?.asset ? <Foto image={m.foto} w={700} h={880} alt={m.foto.alt || m.nombre} loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit" /> : <svg class="hat hat-draw" viewBox="0 0 200 170" role="img" aria-label="Retrato pendiente"><use href="#hat"/></svg>}</div>
+<div><h3 class="serif">{m.nombre}</h3><p class="role">{m.cargo}</p><p>{m.bio}</p></div>
 </article>
-<article class="member rv">
-<div class="arch"><svg class="hat hat-draw" viewBox="0 0 200 170" role="img" aria-label="Retrato pendiente"><use href="#hat"/></svg></div>
-<div><h3 class="serif">[Nombre del chef]</h3><p class="role">Chef de cocina</p><p>Responsable del catering salado y del servicio de chef privado. Le encanta cocinar con producto de temporada.</p></div>
-</article>
-<article class="member rv">
-<div class="arch"><svg class="hat hat-draw" viewBox="0 0 200 170" role="img" aria-label="Retrato pendiente"><use href="#hat"/></svg></div>
-<div><h3 class="serif">[Nombre de la coordinadora]</h3><p class="role">Coordinadora de eventos</p><p>Tu contacto desde el primer mensaje hasta el día del evento. Se asegura de que todo llegue a tiempo y a la perfección.</p></div>
-</article>
+))}
 </div>
 </div>
 </section>
 
 <section class="sec dark" aria-labelledby="val-h">
 <div class="wrap">
-<p class="eyebrow rv">Lo que nos mueve</p>
-<h2 id="val-h" class="serif h-l lines" style="margin-top:18px"><span class="ln"><span>Nuestros <em>valores</em></span></span></h2>
+<p class="eyebrow rv">{p.valoresEtiqueta}</p>
+<h2 id="val-h" class="serif h-l lines" style="margin-top:18px"><Titular value={p.valoresTitulo} /></h2>
 <div class="vals">
-<div class="val rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M7 20c-2.5 0-4-2-3.5-4.5C4 13 6 12 7.5 12.5 7.5 9.5 10 7.5 12.5 8.5 14 6.5 18 7 18 10.5c2 .5 2.5 3.5 1 5L17.5 20z"/><path d="M8 20h9.5"/></svg><h3 class="serif">Hecho a mano</h3><p>Nada sale de una caja. Cada masa, salsa y relleno se prepara en nuestro obrador.</p></div>
-<div class="val rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 21c-4-3-7-6.5-7-10.5C5 7 8 4 12 3c4 1 7 4 7 7.5 0 4-3 7.5-7 10.5z"/><path d="M12 21V9"/><path d="M12 13l-3-2.5M12 16l3-2.5"/></svg><h3 class="serif">De la región</h3><p>Compramos café, frutas y lácteos a productores del Eje Cafetero.</p></div>
-<div class="val rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3 2"/></svg><h3 class="serif">Sin afanes</h3><p>Aceptamos pocos eventos por fecha para dedicarle a cada uno el tiempo que merece.</p></div>
-<div class="val rv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><h3 class="serif">Cercanía</h3><p>Te escuchamos de verdad: tu evento se diseña contigo, no para ti.</p></div>
+{(p.valores ?? []).map((v) => <div class="val rv"><Fragment set:html={ICONOS[v.icono ?? 'gorro'] ?? ICONOS.gorro} /><h3 class="serif">{v.titulo}</h3><p>{v.texto}</p></div>)}
 </div>
-<div class="vals-cta rv"><a class="btn light" href="/contacto">Escribamos el siguiente capítulo juntos</a></div>
+<div class="vals-cta rv"><a class="btn light" href="/contacto">{p.valoresBoton}</a></div>
 </div>
 </section>
 </Layout>

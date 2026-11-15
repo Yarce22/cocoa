@@ -1,0 +1,11 @@
+---
+import type { Titular } from '../lib/sanity';
+/**
+ * Heading lines: `<span class="ln"><span>texto <em>resaltado</em></span></span>`.
+ * mode="hl" for the hero spans; `text` renders a single plain line without <em>.
+ */
+interface Props { value?: Titular | null; text?: string | null; mode?: 'ln' | 'hl'; em?: string }
+const { value, text, mode = 'ln', em } = Astro.props;
+const lineas = text != null ? [{ texto: text }] : (value?.lineas ?? []);
+---
+{lineas.map(({ texto, resaltado }) => <span class={mode}><span>{texto}{texto && resaltado ? ' ' : ''}{resaltado && <em class={em}>{resaltado}</em>}</span></span>)}
