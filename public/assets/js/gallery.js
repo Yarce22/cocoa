@@ -4,6 +4,7 @@
   // shape: t1/t2/t3 = tile height, r = arched top
   const ITEMS = DATA.items || [];
   const FILTERS = DATA.filters || [['todo', '']];
+  const [ONE, MANY] = DATA.contador || ['creación', 'creaciones'];
   const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
   const $ = (s) => document.querySelector(s);
@@ -13,7 +14,7 @@
   const render = () => {
     list = ITEMS.filter((x) => filter === 'todo' || x.cat === filter);
     pills.innerHTML = FILTERS.map(([id, label]) => `<button type="button" class="pill" data-f="${esc(id)}" aria-pressed="${filter === id}">${esc(label)}</button>`).join('');
-    count.textContent = `${list.length} ${list.length === 1 ? 'creación' : 'creaciones'}`;
+    count.textContent = `${list.length} ${list.length === 1 ? ONE : MANY}`;
     grid.innerHTML = list.map((x, i) => `<button type="button" class="tile" style="--n:${i}" data-i="${i}" aria-label="Ver ${esc(x.name)}">
 <div class="ph ${esc(x.shape)}"><img src="${esc(x.src)}" alt="" loading="${i < 4 ? 'eager' : 'lazy'}"></div>
 <div class="tmeta"><b>${esc(x.name)}</b><small>${esc(x.catName)}</small></div></button>`).join('');

@@ -6,7 +6,8 @@ import { getCategories, getDesserts, getPage, jsonForScript, urlFor } from '../l
 const p = (await getPage('reposteria')) ?? {};
 const [postres, categorias] = await Promise.all([getDesserts(), getCategories()]);
 const gallery = {
-  filters: [['todo', p.filtroTodo ?? ''], ...categorias.map((c) => [c._id, c.nombre ?? ''])],
+  filters: [['todo', p.filtroTodo ?? ''], ...categorias.map((c) => [c._id, c.nombreFiltro || c.nombre || ''])],
+  contador: [p.contadorUno || 'creación', p.contadorVarios || 'creaciones'],
   items: postres.map((d) => ({
     cat: d.categoria?._id ?? '',
     catName: d.categoria?.nombre ?? '',

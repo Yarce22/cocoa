@@ -3,10 +3,10 @@ import Layout from '../layouts/Layout.astro';
 import Titular from '../components/Titular.astro';
 import Frase from '../components/Frase.astro';
 import Foto from '../components/Foto.astro';
-import { getDesserts, getPage, getSettings } from '../lib/sanity';
+import { getFavorites, getPage, getSettings } from '../lib/sanity';
 const p = (await getPage('inicio')) ?? {};
 const s = (await getSettings()) ?? {};
-const favoritos = (await getDesserts()).filter((d) => d.destacado);
+const favoritos = await getFavorites();
 const cinta = p.cinta ?? [];
 ---
 <Layout seo={p.seo} title="Cocoa · Pastelería & Catering en Pereira" description="Catering, repostería por encargo y chef privado en Pereira y el Eje Cafetero. Hecho a mano, servido con alma." bodyClass="home">
@@ -101,7 +101,7 @@ const cinta = p.cinta ?? [];
 {favoritos.map((d) => <article class="dcard"><div class="ph arch"><Foto image={d.foto} w={700} loading="lazy" /></div><h3 class="serif">{d.nombreInicio || d.nombre}</h3><span>{d.categoria?.nombreCorto || d.categoria?.nombre}</span></article>)}
 </div>
 </div>
-<div class="wrap rail" aria-hidden="true"><span>{p.portadaDesliza}</span><b><i></i></b></div>
+<div class="wrap rail" aria-hidden="true"><span>{p.favoritosDesliza}</span><b><i></i></b></div>
 </section>
 
 <section class="sec" aria-labelledby="story-title">

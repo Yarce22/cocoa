@@ -31,7 +31,7 @@ export interface Inicio {
   cocinaEtiqueta?: string; cocinaFrase?: Frase; cocinaPuntos?: TituloYTexto[]; cocinaFoto?: Foto; cocinaFotoPequena?: Foto;
   serviciosEtiqueta?: string; serviciosTitulo?: Titular; serviciosTexto?: string;
   serviciosTarjetas?: { _key?: string; etiqueta?: string; titulo?: string; texto?: string; foto?: Foto; enlace?: string; destino?: string }[];
-  favoritosEtiqueta?: string; favoritosTitulo?: Titular; favoritosEnlace?: string;
+  favoritosEtiqueta?: string; favoritosTitulo?: Titular; favoritosEnlace?: string; favoritosDesliza?: string;
   historiaEtiqueta?: string; historiaCita?: Frase; historiaTexto?: string; historiaEnlace?: string; historiaFoto?: Foto;
   finalTitulo?: Titular; finalTexto?: string; finalBoton?: string;
   seo?: Seo;
@@ -48,6 +48,7 @@ export interface Catering {
 
 export interface Reposteria {
   etiqueta?: string; titulo?: Titular; texto?: string; filtroTodo?: string; botonPedir?: string;
+  contadorUno?: string; contadorVarios?: string;
   finalEtiqueta?: string; finalTitulo?: Titular; finalTexto?: string; finalBoton?: string; finalFoto?: Foto;
   seo?: Seo;
 }
@@ -63,6 +64,13 @@ export interface Nosotros {
 }
 
 export interface Pregunta { titulo?: string; ayuda?: string }
+export interface Interfaz {
+  paso?: string; resumen?: string; atras?: string; pregunta?: string; opcional?: string; ultima?: string;
+  siguiente?: string; omitir?: string; verResumen?: string; todoListo?: string; editar?: string; vistaPrevia?: string;
+  enviar?: string; horario?: string;
+  servicio?: string; ocasion?: string; personas?: string; fecha?: string; lugar?: string; detalles?: string;
+  sinDetalles?: string; nombre?: string;
+}
 export interface Contacto {
   titulo?: string; texto?: string; respuestasTitulo?: string; respuestasVacio?: string;
   opciones?: (Pregunta & { opciones?: { texto?: string; detalle?: string; icono?: string }[] })[];
@@ -71,13 +79,15 @@ export interface Contacto {
   notas?: Pregunta & { ejemplo?: string };
   nombre?: Pregunta & { ejemplo?: string };
   resumenTitulo?: string; resumenTexto?: string; saludo?: string; despedida?: string;
+  interfaz?: Interfaz;
   seo?: Seo;
 }
 
-export interface Categoria { _id: string; nombre?: string; nombreCorto?: string; orden?: number }
+export interface Categoria { _id: string; nombre?: string; nombreCorto?: string; nombreFiltro?: string; orden?: number }
 export interface Postre {
   _id: string; nombre?: string; foto?: Foto; categoria?: Categoria | null; descripcion?: string; detalle?: string;
-  alto?: 't1' | 't2' | 't3'; arco?: boolean; destacado?: boolean; nombreInicio?: string; orden?: number;
+  alto?: 't1' | 't2' | 't3'; arco?: boolean; destacado?: boolean; nombreInicio?: string; ordenInicio?: number;
+  enGaleria?: boolean; orden?: number;
 }
 export interface Miembro { _id: string; nombre?: string; cargo?: string; bio?: string; foto?: Foto; orden?: number }
 
@@ -111,14 +121,20 @@ export const getSettings = () => query<Ajustes | null>('*[_id == "ajustes"][0]',
 export const getPage = <K extends keyof Pages>(type: K) =>
   query<Pages[K] | null>('*[_id == $id][0]', { id: type }, null);
 
-const CATEGORIA = '{ _id, nombre, nombreCorto, orden }';
+const CATEGORIA = '{ _id, nombre, nombreCorto, nombreFiltro, orden }';
+const POSTRE = `{ _id, nombre, foto, descripcion, detalle, alto, arco, destacado, nombreInicio, ordenInicio, enGaleria, orden, "categoria": categoria->${CATEGORIA} }`;
 
 export const getCategories = () =>
   query<Categoria[]>(`*[_type == "categoria"] | order(orden asc, nombre asc) ${CATEGORIA}`, {}, []);
 
+/** Desserts shown in the repostería gallery (all except those with "Mostrar en la galería" turned off). */
 export const getDesserts = () =>
+  query<Postre[]>(`*[_type == "postre" && enGaleria != false] | order(orden asc, nombre asc) ${POSTRE}`, {}, []);
+
+/** Desserts marked "Mostrar en el inicio", in home order (ordenInicio, then orden). */
+export const getFavorites = () =>
   query<Postre[]>(
-    `*[_type == "postre"] | order(orden asc, nombre asc) { _id, nombre, foto, descripcion, detalle, alto, arco, destacado, nombreInicio, orden, "categoria": categoria->${CATEGORIA} }`,
+    `*[_type == "postre" && destacado == true] | order(coalesce(ordenInicio, 9999) asc, orden asc, nombre asc) ${POSTRE}`,
     {},
     [],
   );

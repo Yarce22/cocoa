@@ -131,6 +131,7 @@ const inicio = {
   favoritosEtiqueta: 'Desde la vitrina',
   favoritosTitulo: titular(['Los favoritos', 'de la casa']),
   favoritosEnlace: 'Ver toda la galería',
+  favoritosDesliza: 'Desliza',
   historiaEtiqueta: 'Nuestra historia',
   historiaCita: frase(
     '“Todo empezó en una cocina pequeña, con la receta de la abuela y un horno que no',
@@ -214,6 +215,8 @@ const reposteria = {
   texto: 'Tortas, postres individuales, galletas y mesas de dulces horneados a mano con mantequilla, cacao y frutas de la región. Toca cualquier foto para ver el detalle.',
   filtroTodo: 'Todo',
   botonPedir: 'Pedir algo así',
+  contadorUno: 'creación',
+  contadorVarios: 'creaciones',
   finalEtiqueta: 'Pedidos personalizados',
   finalTitulo: titular(['¿Tienes una idea?'], ['', 'La horneamos.']),
   finalTexto: 'Cuéntanos sabores, colores, número de porciones y la fecha. Te respondemos por WhatsApp con opciones y precio. Recomendamos pedir con al menos 5 días de anticipación.',
@@ -317,24 +320,50 @@ const contacto = {
   resumenTexto: 'Revisa tus respuestas. Al tocar el botón se abre WhatsApp con este mensaje listo para enviar.',
   saludo: 'Hola, Cocoa. Soy {nombre} y quiero cotizar un evento.',
   despedida: 'Quedo pendiente de su propuesta. ¡Gracias!',
+  // quiz.js button and label texts.
+  interfaz: {
+    paso: 'Paso {n} de {total}',
+    resumen: 'Resumen',
+    atras: 'Atrás',
+    pregunta: 'Pregunta',
+    opcional: 'Opcional',
+    ultima: 'Última',
+    siguiente: 'Siguiente',
+    omitir: 'Omitir',
+    verResumen: 'Ver resumen',
+    todoListo: 'Todo listo',
+    editar: 'Editar',
+    vistaPrevia: 'Vista previa del mensaje',
+    enviar: 'Enviar por WhatsApp',
+    horario: 'Te respondemos en horario de 8:00 a. m. a 6:00 p. m.',
+    servicio: 'Servicio',
+    ocasion: 'Ocasión',
+    personas: 'Personas',
+    fecha: 'Fecha',
+    lugar: 'Lugar',
+    detalles: 'Detalles',
+    sinDetalles: 'Sin detalles adicionales',
+    nombre: 'Nombre',
+  },
   seo: seo('Cotiza tu evento · Cocoa', 'Responde 7 preguntas rápidas y envíanos tu evento por WhatsApp. Te respondemos con una propuesta hecha para ti.'),
 };
 
 /* --------------------------------------------------------------- categorías */
 
-// gallery.js CATS (name) + FILTERS (order); nombreCorto = label on the home cards.
+// gallery.js CATS (name) + FILTERS (order and pill label); nombreCorto = label on the home cards.
 const CATEGORIAS = [
   ['tortas', 'Tortas', 'Tortas'],
   ['individuales', 'Postres individuales', 'Individual'],
   ['galletas', 'Galletas', 'Galletas'],
   ['mesas', 'Mesas de dulces', 'Mesas'],
-  ['personalizados', 'Personalizados'],
+  ['personalizados', 'Personalizados', undefined, 'Pedidos personalizados'],
 ];
-const categorias = CATEGORIAS.map(([id, nombre, nombreCorto], i) => ({
+const categorias = CATEGORIAS.map(([id, nombre, nombreCorto, nombreFiltro], i) => ({
   _id: `categoria-${id}`,
   _type: 'categoria',
   nombre,
   ...(nombreCorto ? { nombreCorto } : {}),
+  ...(nombreFiltro ? { nombreFiltro } : {}),
   orden: i + 1,
 }));
 
@@ -373,6 +402,7 @@ const FAVORITOS = [
 const postres = ITEMS.map((x, i) => {
   const [alto, arcoFlag] = x.shape.split(' ');
   const fav = FAVORITOS.find(([id]) => id === x.id);
+  const favIndex = FAVORITOS.indexOf(fav);
   return {
     _id: `postre-${slugify(x.name)}`,
     _type: 'postre',
@@ -386,11 +416,14 @@ const postres = ITEMS.map((x, i) => {
     arco: arcoFlag === 'r',
     destacado: !!fav,
     ...(fav && fav[1] !== x.name ? { nombreInicio: fav[1] } : {}),
+    ...(fav ? { ordenInicio: favIndex + 1 } : {}),
+    enGaleria: true,
     orden: i + 1,
   };
 });
-for (const [id, nombre, alt, cat] of FAVORITOS) {
-  if (ITEMS.some((x) => x.id === id)) continue;
+// Home-only favorites (not in the gallery today), e.g. Macarons de café.
+FAVORITOS.forEach(([id, nombre, alt, cat], favIndex) => {
+  if (ITEMS.some((x) => x.id === id)) return;
   postres.push({
     _id: `postre-${slugify(nombre)}`,
     _type: 'postre',
@@ -400,9 +433,11 @@ for (const [id, nombre, alt, cat] of FAVORITOS) {
     alto: 't2',
     arco: false,
     destacado: true,
+    ordenInicio: favIndex + 1,
+    enGaleria: false,
     orden: postres.length + 1,
   });
-}
+});
 
 /* ------------------------------------------------------------------ equipo */
 

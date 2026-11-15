@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import { getPage, getSettings, jsonForScript } from '../lib/sanity';
 const p = (await getPage('contacto')) ?? {};
 const s = (await getSettings()) ?? {};
+const ui = p.interfaz ?? {};
+const paso1 = (ui.paso || 'Paso {n} de {total}').split('{n}').join('1').split('{total}').join('7');
 const quiz = {
   wa: s.whatsapp ?? '',
   vacio: p.respuestasVacio ?? '',
@@ -19,6 +21,7 @@ const quiz = {
   resumenTexto: p.resumenTexto ?? '',
   saludo: p.saludo ?? '',
   despedida: p.despedida ?? '',
+  ui,
 };
 ---
 <Layout seo={p.seo} title="Cotiza tu evento · Cocoa" description="Responde 7 preguntas rápidas y envíanos tu evento por WhatsApp. Te respondemos con una propuesta hecha para ti." bodyClass="quiz" mainClass="inner" scripts={["quiz"]}>
@@ -35,8 +38,8 @@ const quiz = {
 
 <section aria-label="Quiz de cotización">
 <div class="qz-top">
-<button type="button" class="q-back" id="q-back" disabled><i class="arr back"></i>Atrás</button>
-<span class="q-label" id="q-label" aria-live="polite">Paso 1 de 7</span>
+<button type="button" class="q-back" id="q-back" disabled><i class="arr back"></i>{ui.atras || 'Atrás'}</button>
+<span class="q-label" id="q-label" aria-live="polite">{paso1}</span>
 </div>
 <div class="bar" id="q-bar" role="progressbar" aria-label="Progreso del quiz" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0">
 <span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span><span class="seg"></span>
