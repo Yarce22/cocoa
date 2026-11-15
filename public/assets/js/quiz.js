@@ -51,7 +51,23 @@
     const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(a.fecha);
     return m ? `${+m[3]} de ${MONTHS[+m[2] - 1]} de ${m[1]}` : '';
   };
-  const valid = () => [!!a.servicio, !!a.ocasion, !!a.personas, a.sinFecha || !!a.fecha, a.lugar.trim().length > 1, true, a.nombre.trim().length > 0][step];
+  const valid = (s = step) => [!!a.servicio, !!a.ocasion, !!a.personas, a.sinFecha || !!a.fecha, a.lugar.trim().length > 1, true, a.nombre.trim().length > 0][s];
+
+  // Progress survives leaving the page; cleared once the quote is sent by WhatsApp.
+  const KEY = 'cocoaQuiz';
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify({ v: 1, step, a })); } catch (e) {} };
+  const forget = () => { try { localStorage.removeItem(KEY); } catch (e) {} };
+  const restore = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(KEY));
+      if (!saved || saved.v !== 1 || typeof saved.a !== 'object') return 0;
+      for (const k of Object.keys(a)) if (typeof saved.a[k] === typeof a[k]) a[k] = saved.a[k];
+      const target = Math.min(Math.max(parseInt(saved.step, 10) || 0, 0), SUMMARY);
+      let s = 0;
+      while (s < target && valid(s)) s++; // never land past an unanswered question
+      return s;
+    } catch (e) { return 0; }
+  };
   const message = () => {
     const lines = [(D.saludo || '').split('{nombre}').join(a.nombre.trim() || '—'), '',
       `• ${T.servicio}: ${a.servicio || '—'}`, `• ${T.ocasion}: ${a.ocasion || '—'}`, `• ${T.personas}: ${a.personas || '—'}`,
@@ -102,11 +118,15 @@
     $('#q-bar').setAttribute('aria-valuenow', step);
     document.querySelectorAll('.seg').forEach((s, i) => s.classList.toggle('on', i <= step));
     const chips = [a.servicio, a.ocasion, a.personas && `${a.personas} personas`, step > 3 && fechaTxt(), step > 4 && a.lugar.trim(), step > 6 && a.nombre.trim()].filter(Boolean);
-    $('#q-chips').innerHTML = chips.length ? chips.map((c) => `<span class="chip">${esc(c)}</span>`).join('') : `<p>${esc(D.vacio || '')}</p>`;
+    const chipsHtml = chips.length ? chips.map((c) => `<span class="chip">${esc(c)}</span>`).join('') : `<p>${esc(D.vacio || '')}</p>`;
+    // Rewrite only on change: replacing the nodes replays their pop-in animation on every keystroke.
+    if (chipsHtml !== lastChips) { $('#q-chips').innerHTML = chipsHtml; lastChips = chipsHtml; }
+    save();
     const next = host.querySelector('[data-act="next"]');
     if (next) next.disabled = !valid();
   };
 
+  let lastChips = null;
   const go = (n) => {
     const dir = n < step ? ' rev' : '';
     step = n;
@@ -120,6 +140,7 @@
   const next = () => valid() && step < SUMMARY && go(step + 1);
 
   host.addEventListener('click', (e) => {
+    if (e.target.closest('a.wa')) return forget();
     const el = e.target.closest('[data-pick],[data-act],[data-city],[data-go]');
     if (!el) return;
     if (el.dataset.pick) {
@@ -149,5 +170,5 @@
   });
   back.addEventListener('click', () => step > 0 && go(step - 1));
 
-  go(0);
+  go(restore());
 })();

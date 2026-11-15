@@ -28,3 +28,4 @@ Branch: feat/astro-sanity. Hosting: Vercel.
 - L4 (evidence): no-env build lists 6 pages; real Sanity import and live render blocked until the user provides keys in .env.local.
 - L5 (evidence): gentle-ai-verify: checks 1,2,3,5 pass; S1 minor hardcoded gaps (brand wordmark, quiz '¡Gracias', months); npm audit 20 vulns (5 high, transitive via @astrojs/vercel/sanity CLI). Regression test tests/seed-schema.test.mjs added.
 - L6 (evidence): npm run seed → 34 photos, 29 docs in production. Build against real Sanity: 5 pages text/links/img count identical to 823c7b6; gallery 14 items; dev /, /admin, /reposteria → 200.
+- L7 (user, verbatim): "Tenemos un error en el cotizador. Cada que escribimos algo como el nombre, o en la pregunta seis o de la ubicacion, se re-renderizan los botones de "Tu evetno hasta ahora". Tambien debemos hacer que no se pierda la cotizacion al salir de ella. Los textos fijos dejalos por ahora. Despues realiza la revision automatica del codigo"
