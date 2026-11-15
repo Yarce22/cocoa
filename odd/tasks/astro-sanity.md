@@ -19,10 +19,13 @@ Branch: feat/astro-sanity. Hosting: Vercel.
 - T3 [S1,S2] Schemas: siteSettings (contact, WhatsApp, socials, nav, footer, SEO), page singletons (home, catering, repostería, nosotros, contacto), collections (desserts/gallery, team, quiz questions). Spanish desk structure. Route: inline. Commit: 817804d (tsc clean, build OK)
 - T4 [S1] Seed script importing the current content and images into Sanity. Route: worker (parallel with T5, context backstop). Commit: 92c3f9d, be4cf9b (dry-run validated against schemas; real import pending keys)
 - T5 [S1,S9] Wire every page and component to Sanity data (GROQ), images via @sanity/image-url. Route: worker (parallel with T4, context backstop). Commit: d2b096f, be4cf9b (fixture build text-identical to 823c7b6 except descriptive gallery alts; live Sanity check pending keys)
-- T6 [S6,S2] Webhook rebuild setup docs + owner guide in Spanish (docs/GUIA-DUENOS.md); remove legacy HTML. Route: inline. Commit: pending
+- T6 [S6,S2] Webhook rebuild setup docs + owner guide in Spanish (docs/GUIA-DUENOS.md); remove legacy HTML. Route: inline. Commit: f3b28af (legacy HTML removed in 823c7b6)
 
 ## Log
 - L1 (user, verbatim): "El sitio web debe de ser completamente personalizado por los dueños. Las imagenes, los titulos, los textos, todo debe de ser completamente personalizable. Ellos no tienen nada de conocimiento tecnico, asi que debe de ser lo mas intuitivo posible. Quiero usar para esta web Astro, crea primero la planeacion para convertir toda esta web a Astro y luego empieza a ejecutar esa planeacion. Ve realizando commits de cada cambio. Usaremos Sanity para la administracion de la web. Cuando necesites las keys de sanity me avisas para ponerlas en el .env.local"
 - L2 (user decisions): publish = "Estático + rebuild automático"; admin = "Dentro del sitio en /admin"; preview = "No por ahora".
 - L3 (decision): gallery lightbox alts now use each dessert's descriptive photo alt instead of the dessert name (accessibility improvement, not visible).
 - L4 (evidence): no-env build lists 6 pages; real Sanity import and live render blocked until the user provides keys in .env.local.
+- L5 (evidence): gentle-ai-verify: checks 1,2,3,5 pass; S1 minor hardcoded gaps (brand wordmark, quiz '¡Gracias', months); npm audit 20 vulns (5 high, transitive via @astrojs/vercel/sanity CLI). Regression test tests/seed-schema.test.mjs added.
+- L6 (evidence): npm run seed → 34 photos, 29 docs in production. Build against real Sanity: 5 pages text/links/img count identical to 823c7b6; gallery 14 items; dev /, /admin, /reposteria → 200.
+- L7 (user, verbatim): "Tenemos un error en el cotizador. Cada que escribimos algo como el nombre, o en la pregunta seis o de la ubicacion, se re-renderizan los botones de "Tu evetno hasta ahora". Tambien debemos hacer que no se pierda la cotizacion al salir de ella. Los textos fijos dejalos por ahora. Despues realiza la revision automatica del codigo"
