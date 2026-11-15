@@ -4,7 +4,7 @@ import vercel from '@astrojs/vercel';
 import react from '@astrojs/react';
 import sanity from '@sanity/astro';
 
-const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '');
+const { PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET } = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), 'PUBLIC_');
 
 export default defineConfig({
   output: 'static',
