@@ -78,7 +78,7 @@
       return `<p class="eyebrow">Todo listo</p><h2 class="serif">¡Gracias${name ? `, ${esc(name)}` : ''}! Este es tu evento</h2>
 <p class="hint">Revisa tus respuestas. Al tocar el botón se abre WhatsApp con este mensaje listo para enviar.</p>
 <div class="sumgrid"><div>${rows.map(([k, v], i) => `<div class="sumrow"><span class="k">${k}</span><span class="v">${esc(v || '—')}</span><button type="button" class="q-edit" data-go="${i}" aria-label="Editar ${k.toLowerCase()}">Editar</button></div>`).join('')}</div>
-<div class="send"><div class="chat"><div class="chat-head"><img src="assets/logo.jpg" alt="" width="40" height="40"><span>Cocoa · Pastelería &amp; Catering<small>Vista previa del mensaje</small></span></div>
+<div class="send"><div class="chat"><div class="chat-head"><img src="assets/img/logos/logo-badge-cream.svg" alt="" width="40" height="40"><span>Cocoa · Pastelería &amp; Catering<small>Vista previa del mensaje</small></span></div>
 <div class="bubble">${esc(message())}<small>ahora ✓✓</small></div></div>
 <a class="btn wa" href="https://wa.me/${WA}?text=${encodeURIComponent(message())}" target="_blank" rel="noopener"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#wa"/></svg>Enviar por WhatsApp</a>
 <p>Te respondemos en horario de 8:00 a. m. a 6:00 p. m.</p></div></div>`;
