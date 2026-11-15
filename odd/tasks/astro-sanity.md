@@ -27,3 +27,4 @@ Branch: feat/astro-sanity. Hosting: Vercel.
 - L3 (decision): gallery lightbox alts now use each dessert's descriptive photo alt instead of the dessert name (accessibility improvement, not visible).
 - L4 (evidence): no-env build lists 6 pages; real Sanity import and live render blocked until the user provides keys in .env.local.
 - L5 (evidence): gentle-ai-verify: checks 1,2,3,5 pass; S1 minor hardcoded gaps (brand wordmark, quiz '¡Gracias', months); npm audit 20 vulns (5 high, transitive via @astrojs/vercel/sanity CLI). Regression test tests/seed-schema.test.mjs added.
+- L6 (evidence): npm run seed → 34 photos, 29 docs in production. Build against real Sanity: 5 pages text/links/img count identical to 823c7b6; gallery 14 items; dev /, /admin, /reposteria → 200.
