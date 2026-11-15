@@ -14,11 +14,11 @@ Branch: feat/astro-sanity. Hosting: Vercel.
 - S9: the visual design and animations must stay identical to the current site.
 
 ## Tasks
-- T1 [S3,S9] Scaffold Astro (static + Vercel adapter), move assets to public/, shared Layout (head, nav, mobile menu, footer, WhatsApp FAB), port the 5 pages 1:1. Route: inline. Commit: pending
-- T2 [S5,S7,S2] Install Sanity + @sanity/astro, Studio at /admin, env vars, client. Needs keys from the user. Route: inline. Commit: pending
-- T3 [S1,S2] Schemas: siteSettings (contact, WhatsApp, socials, nav, footer, SEO), page singletons (home, catering, repostería, nosotros, contacto), collections (desserts/gallery, team, quiz questions). Spanish desk structure. Route: inline. Commit: pending
-- T4 [S1] Seed script importing the current content and images into Sanity. Route: inline. Commit: pending
-- T5 [S1,S9] Wire every page and component to Sanity data (GROQ), images via @sanity/image-url. Route: inline. Commit: pending
+- T1 [S3,S9] Scaffold Astro (static + Vercel adapter), move assets to public/, shared Layout (head, nav, mobile menu, footer, WhatsApp FAB), port the 5 pages 1:1. Route: inline. Commit: 823c7b6 (verified: normalized HTML of the 5 built pages identical to the originals)
+- T2 [S5,S7,S2] Install Sanity + @sanity/astro, Studio at /admin, env vars, client. Needs keys from the user. Route: inline. Commit: 703e0eb (build OK with placeholder projectId; real keys pending)
+- T3 [S1,S2] Schemas: siteSettings (contact, WhatsApp, socials, nav, footer, SEO), page singletons (home, catering, repostería, nosotros, contacto), collections (desserts/gallery, team, quiz questions). Spanish desk structure. Route: inline. Commit: 817804d (tsc clean, build OK)
+- T4 [S1] Seed script importing the current content and images into Sanity. Route: worker (parallel with T5, context backstop). Commit: pending
+- T5 [S1,S9] Wire every page and component to Sanity data (GROQ), images via @sanity/image-url. Route: worker (parallel with T4, context backstop). Commit: pending
 - T6 [S6,S2] Webhook rebuild setup docs + owner guide in Spanish (docs/GUIA-DUENOS.md); remove legacy HTML. Route: inline. Commit: pending
 
 ## Log
