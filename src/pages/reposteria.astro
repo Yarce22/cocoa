@@ -1,0 +1,58 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Repostería por encargo · Cocoa" description="Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración." mainClass="inner" scripts={["gallery"]}>
+<section class="page-head" style="padding-bottom:40px">
+<div class="wrap grid">
+<div>
+<p class="eyebrow rv">Repostería por encargo</p>
+<h1 class="serif h-xl lines"><span class="ln"><span>El amor</span></span><span class="ln"><span><em class="accent">es dulce</em></span></span></h1>
+</div>
+<p class="lead rv">Tortas, postres individuales, galletas y mesas de dulces horneados a mano con mantequilla, cacao y frutas de la región. Toca cualquier foto para ver el detalle.</p>
+</div>
+</section>
+
+<section style="padding-bottom:96px" aria-label="Galería de repostería">
+<div class="wrap">
+<div class="pills" role="group" aria-label="Filtrar por categoría"></div>
+<p class="count" aria-live="polite"></p>
+<div class="masonry"></div>
+<noscript><p class="lead">Activa JavaScript para ver la galería, o <a href="/contacto">escríbenos</a> y te enviamos el catálogo.</p></noscript>
+</div>
+</section>
+
+<section class="sec dark round-top" aria-labelledby="cta-h">
+<div class="wrap order">
+<div class="ph arch unmask"><img class="px" src="https://images.unsplash.com/photo-1777647322811-af273ac27c29?auto=format&amp;fit=crop&amp;w=1000&amp;q=70" alt="Masa de chocolate vertiéndose en un molde para hornear" loading="lazy"></div>
+<div>
+<p class="eyebrow rv">Pedidos personalizados</p>
+<h2 id="cta-h" class="serif h-l lines"><span class="ln"><span>¿Tienes una idea?</span></span><span class="ln"><span><em>La horneamos.</em></span></span></h2>
+<p class="lead rv">Cuéntanos sabores, colores, número de porciones y la fecha. Te respondemos por WhatsApp con opciones y precio. Recomendamos pedir con al menos 5 días de anticipación.</p>
+<a class="btn light rv" href="/contacto">Diseñar mi pedido <i class="arr"></i></a>
+</div>
+</div>
+</section>
+<Fragment slot="after">
+<dialog class="lb" aria-labelledby="lb-name">
+<div class="lb-card">
+<div class="ph lb-img"><img id="lb-img" src="" alt=""></div>
+<div class="lb-body">
+<div class="lb-top">
+<span class="eyebrow" id="lb-cat"></span>
+<button type="button" class="icon-btn" data-lb="close" aria-label="Cerrar vista ampliada"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+</div>
+<h2 class="serif" id="lb-name"></h2>
+<p id="lb-desc"></p>
+<p class="lb-detail" id="lb-detail"></p>
+<div class="lb-foot">
+<a class="btn" href="/contacto" style="min-height:50px;padding:0 22px;font-size:12px">Pedir algo así</a>
+<div style="display:flex;gap:8px">
+<button type="button" class="icon-btn" data-lb="prev" aria-label="Foto anterior"><i class="arr back"></i></button>
+<button type="button" class="icon-btn" data-lb="next" aria-label="Foto siguiente"><i class="arr"></i></button>
+</div>
+</div>
+</div>
+</div>
+</dialog>
+</Fragment>
+</Layout>
