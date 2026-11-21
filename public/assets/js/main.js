@@ -103,7 +103,6 @@
 
   $$('.zoom').forEach((el) => gsap.from(el, { scale: 1.3, duration: 1.9, ease: 'power3.out', scrollTrigger: once(el) }));
   $$('.px').forEach((el) => gsap.fromTo(el, { yPercent: -8 }, { yPercent: 8, ease: 'none', scrollTrigger: { trigger: el.parentElement, scrub: true } }));
-  $$('.hat-draw').forEach((el) => gsap.from(el, { strokeDashoffset: 1, duration: 1.8, ease: 'power2.inOut', scrollTrigger: once(el, 'top 90%') }));
 
   if ($('.hero')) {
     gsap.to('.hero-media', { yPercent: 12, ease: 'none', scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true } });
