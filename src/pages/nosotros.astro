@@ -52,7 +52,7 @@ const ICONOS: Record<string, string> = {
 <div class="team">
 {team.map((m) => (
 <article class="member rv">
-<div class="arch">{m.foto?.asset ? <Foto image={m.foto} w={700} h={880} alt={m.foto.alt || m.nombre} loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit" /> : <svg class="hat hat-draw" viewBox="0 0 200 170" role="img" aria-label="Retrato pendiente"><use href="#hat"/></svg>}</div>
+<div class="arch">{m.foto?.asset ? <Foto image={m.foto} w={700} h={880} alt={m.foto.alt || m.nombre} loading="lazy" style="width:100%;height:100%;object-fit:cover;border-radius:inherit" /> : <span class="iso" role="img" aria-label="Retrato pendiente"></span>}</div>
 <div><h3 class="serif">{m.nombre}</h3><p class="role">{m.cargo}</p><p>{m.bio}</p></div>
 </article>
 ))}
