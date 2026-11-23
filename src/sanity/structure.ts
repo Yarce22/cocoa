@@ -5,6 +5,7 @@ export const singletons = [
   { type: 'inicio', title: 'Página de inicio' },
   { type: 'catering', title: 'Página de catering' },
   { type: 'reposteria', title: 'Página de repostería' },
+  { type: 'galeria', title: 'Página de galería' },
   { type: 'nosotros', title: 'Página de nosotros' },
   { type: 'contacto', title: 'Página del cotizador' },
 ] as const;

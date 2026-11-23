@@ -4,6 +4,7 @@
  *
  *   npm run seed              → sube las fotos y crea/reemplaza todos los documentos
  *   node scripts/seed.mjs --dry-run   → sin red ni token: imprime los documentos en JSON
+ *   npm run seed -- --only=reposteria → solo crea/reemplaza esos documentos (separados por coma)
  *
  * Variables: PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET (por defecto "production"), SANITY_WRITE_TOKEN.
  * Los _id son fijos, así que volver a ejecutarlo reemplaza los mismos documentos, y las fotos
@@ -53,6 +54,7 @@ const ajustes = {
   usuarioRedes: '@cocoa.pasteleria',
   menuCatering: 'Catering',
   menuReposteria: 'Repostería',
+  menuGaleria: 'Galería',
   menuNosotros: 'Nosotros',
   menuInicio: 'Inicio',
   botonCotizar: 'Cotiza tu evento',
@@ -212,6 +214,56 @@ const reposteria = {
   _type: 'reposteria',
   etiqueta: 'Repostería por encargo',
   titulo: titular(['El amor'], ['', 'es dulce']),
+  texto: 'Tortas, postres individuales, galletas y mesas de dulces horneados a mano con mantequilla, cacao y frutas de la región. Tú eliges sabores y colores; nosotros lo horneamos para tu fecha.',
+  foto: photo('1606890737304-57a1ca8a5b62', 1100, 'Torta de chocolate de tres capas con crema y cerezas'),
+  cinta: ['Tortas', 'Postres individuales', 'Galletas', 'Mesas de dulces', 'Pedidos personalizados'],
+  serviciosTitulo: titular(['Lo que horneamos']),
+  serviciosTexto: 'Cuatro formas de endulzar tu celebración, hechas desde cero y a la medida de tu ocasión.',
+  idealPara: 'Ideal para',
+  servicios: keyed('servicio', [
+    servicio('01 · Tortas', 'Tortas por encargo',
+      'Bizcochos húmedos, rellenos caseros y coberturas hechas a mano. Clásicas como la tres leches o diseños de varios pisos para bodas, con el sabor y la decoración que imagines.',
+      ['1761671613315-53157f91d0f8', 'Torta de bodas de tres pisos decorada con flores'],
+      ['Cumpleaños', 'Bodas', 'Aniversarios', 'Bautizos'],
+      'Incluye: diseño a tu gusto, mensaje personalizado y caja para transportar.'),
+    servicio('02 · Individuales', 'Postres individuales',
+      'Cheesecakes, tartaletas, brownies y vasitos listos para servir. Porciones bonitas y prácticas para reuniones, regalos o para completar una mesa de postres.',
+      ['1620980776848-84ac10194945', 'Tartaletas de frutos rojos sobre una mesa de madera'],
+      ['Reuniones', 'Regalos', 'Eventos de empresa', 'Mesas de postres'],
+      'Incluye: empaque individual y presentación en bandeja. Mínimo 12 unidades.'),
+    servicio('03 · Galletas', 'Galletas y alfajores',
+      'Galletas de mantequilla con chips, alfajores de maicena y galletas decoradas con glaseado real, con el logo o las iniciales que quieras.',
+      ['1782852232674-64bc7f102866', 'Galletas decoradas con glaseado'],
+      ['Detalles para invitados', 'Regalos corporativos', 'Baby showers', 'Navidad'],
+      'Incluye: cajas de 6, 12 o 24 unidades y empaque individual opcional.'),
+    servicio('04 · Mesas', 'Mesas de dulces',
+      'Una mesa completa de postres diseñada con la paleta de tu evento: torta central, bocados dulces, macarons y galletas, montada y rotulada por nuestro equipo.',
+      ['1774660811156-af780020091c', 'Mesa de dulces en tonos tierra con torta central'],
+      ['Bodas', 'Baby showers', 'Cumpleaños', 'Lanzamientos de marca'],
+      'Incluye: diseño de la mesa, bases y bandejas, rotulación y montaje.'),
+  ]),
+  pasosEtiqueta: 'Paso a paso',
+  pasosTitulo: titular(['Cómo', 'pedir']),
+  pasosTexto: 'Pedir tu postre es sencillo: cuéntanos la idea y nosotros nos encargamos del resto.',
+  pasos: keyed('paso', [
+    tyt('Nos cuentas tu idea', 'Sabores, colores, número de porciones y la fecha. Puedes enviarnos fotos de referencia.'),
+    tyt('Te enviamos la propuesta', 'Te respondemos por WhatsApp con opciones, precio y fecha de entrega.'),
+    tyt('Horneamos a mano', 'Preparamos tu pedido desde cero, con mantequilla, cacao y frutas de la región.'),
+    tyt('Recoges o te lo llevamos', 'Entregamos en Pereira y el Eje Cafetero, o lo recoges en nuestro obrador.'),
+  ]),
+  finalTitulo: titular(['Pide tu postre a la medida']),
+  finalTexto: 'Recomendamos pedir con al menos 5 días de anticipación.',
+  finalBoton: 'Diseñar mi pedido',
+  seo: seo('Repostería por encargo · Cocoa', 'Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración.'),
+};
+
+/* ------------------------------------------------------------------ galería */
+
+const galeria = {
+  _id: 'galeria',
+  _type: 'galeria',
+  etiqueta: 'Galería',
+  titulo: titular(['El amor'], ['', 'es dulce']),
   texto: 'Tortas, postres individuales, galletas y mesas de dulces horneados a mano con mantequilla, cacao y frutas de la región. Toca cualquier foto para ver el detalle.',
   filtroTodo: 'Todo',
   botonPedir: 'Pedir algo así',
@@ -222,7 +274,7 @@ const reposteria = {
   finalTexto: 'Cuéntanos sabores, colores, número de porciones y la fecha. Te respondemos por WhatsApp con opciones y precio. Recomendamos pedir con al menos 5 días de anticipación.',
   finalBoton: 'Diseñar mi pedido',
   finalFoto: photo('1777647322811-af273ac27c29', 1000, 'Masa de chocolate vertiéndose en un molde para hornear'),
-  seo: seo('Repostería por encargo · Cocoa', 'Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración.'),
+  seo: seo('Galería de repostería · Cocoa', 'Galería de tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira por Cocoa.'),
 };
 
 /* ----------------------------------------------------------------- nosotros */
@@ -447,7 +499,10 @@ const miembros = [
   ['[Nombre de la coordinadora]', 'Coordinadora de eventos', 'Tu contacto desde el primer mensaje hasta el día del evento. Se asegura de que todo llegue a tiempo y a la perfección.'],
 ].map(([nombre, cargo, bio], i) => ({ _id: `miembro-${i + 1}`, _type: 'miembro', nombre, cargo, bio, orden: i + 1 }));
 
-const DOCS = [ajustes, inicio, catering, reposteria, nosotros, contacto, ...categorias, ...postres, ...miembros];
+const ALL_DOCS = [ajustes, inicio, catering, reposteria, galeria, nosotros, contacto, ...categorias, ...postres, ...miembros];
+// --only=id1,id2 limits the run to those documents (e.g. --only=reposteria), leaving the rest untouched.
+const ONLY = process.argv.find((a) => a.startsWith('--only='))?.slice(7).split(',');
+const DOCS = ONLY ? ALL_DOCS.filter((d) => ONLY.includes(d._id)) : ALL_DOCS;
 
 /* ------------------------------------------------------------------ images */
 

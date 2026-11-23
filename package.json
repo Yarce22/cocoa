@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "seed": "node --env-file=.env.local scripts/seed.mjs",
+    "migrate:galeria": "node --env-file=.env.local scripts/migrate-galeria.mjs",
     "test": "node --test tests/seed-schema.test.mjs tests/no-secret-in-build.test.mjs tests/quiz.test.mjs"
   },
   "dependencies": {

@@ -1,79 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Titular from '../components/Titular.astro';
-import Foto from '../components/Foto.astro';
-import { getCategories, getDesserts, getPage, jsonForScript, urlFor } from '../lib/sanity';
+import PaginaServicios from '../components/PaginaServicios.astro';
+import { getPage, getSettings } from '../lib/sanity';
 const p = (await getPage('reposteria')) ?? {};
-const [postres, categorias] = await Promise.all([getDesserts(), getCategories()]);
-const gallery = {
-  filters: [['todo', p.filtroTodo ?? ''], ...categorias.map((c) => [c._id, c.nombreFiltro || c.nombre || ''])],
-  contador: [p.contadorUno || 'creación', p.contadorVarios || 'creaciones'],
-  items: postres.map((d) => ({
-    cat: d.categoria?._id ?? '',
-    catName: d.categoria?.nombre ?? '',
-    shape: `${d.alto ?? 't2'}${d.arco ? ' r' : ''}`,
-    src: urlFor(d.foto, 600),
-    full: urlFor(d.foto, 1200),
-    alt: d.foto?.alt || d.nombre || '',
-    name: d.nombre ?? '',
-    desc: d.descripcion ?? '',
-    detail: d.detalle ?? '',
-  })),
-};
+const s = (await getSettings()) ?? {};
 ---
-<Layout seo={p.seo} title="Repostería por encargo · Cocoa" description="Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración." mainClass="inner" scripts={["gallery"]}>
-<section class="page-head" style="padding-bottom:40px">
-<div class="wrap grid">
-<div>
-<p class="eyebrow rv">{p.etiqueta}</p>
-<h1 class="serif h-xl lines"><Titular value={p.titulo} em="accent" /></h1>
-</div>
-<p class="lead rv">{p.texto}</p>
-</div>
-</section>
-
-<section style="padding-bottom:96px" aria-label="Galería de repostería">
-<div class="wrap">
-<div class="pills" role="group" aria-label="Filtrar por categoría"></div>
-<p class="count" aria-live="polite"></p>
-<div class="masonry"></div>
-<noscript><p class="lead">Activa JavaScript para ver la galería, o <a href="/contacto">escríbenos</a> y te enviamos el catálogo.</p></noscript>
-</div>
-</section>
-
-<section class="sec dark round-top" aria-labelledby="cta-h">
-<div class="wrap order">
-<div class="ph arch unmask"><Foto class="px" image={p.finalFoto} w={1000} loading="lazy" /></div>
-<div>
-<p class="eyebrow rv">{p.finalEtiqueta}</p>
-<h2 id="cta-h" class="serif h-l lines"><Titular value={p.finalTitulo} /></h2>
-<p class="lead rv">{p.finalTexto}</p>
-<a class="btn light rv" href="/contacto">{p.finalBoton} <i class="arr"></i></a>
-</div>
-</div>
-</section>
-<Fragment slot="after">
-<dialog class="lb" aria-labelledby="lb-name">
-<div class="lb-card">
-<div class="ph lb-img"><img id="lb-img" src="" alt=""></div>
-<div class="lb-body">
-<div class="lb-top">
-<span class="eyebrow" id="lb-cat"></span>
-<button type="button" class="icon-btn" data-lb="close" aria-label="Cerrar vista ampliada"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-</div>
-<h2 class="serif" id="lb-name"></h2>
-<p id="lb-desc"></p>
-<p class="lb-detail" id="lb-detail"></p>
-<div class="lb-foot">
-<a class="btn" href="/contacto" style="min-height:50px;padding:0 22px;font-size:12px">{p.botonPedir}</a>
-<div style="display:flex;gap:8px">
-<button type="button" class="icon-btn" data-lb="prev" aria-label="Foto anterior"><i class="arr back"></i></button>
-<button type="button" class="icon-btn" data-lb="next" aria-label="Foto siguiente"><i class="arr"></i></button>
-</div>
-</div>
-</div>
-</div>
-</dialog>
-<script is:inline type="application/json" id="gallery-data" set:html={jsonForScript(gallery)}></script>
-</Fragment>
+<Layout seo={p.seo} title="Repostería por encargo · Cocoa" description="Tortas, postres individuales, galletas y mesas de dulces horneados a mano en Pereira. Pedidos personalizados para tu celebración." mainClass="inner">
+<PaginaServicios p={p} boton={s.botonCotizar} />
 </Layout>

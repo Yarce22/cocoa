@@ -1,0 +1,76 @@
+---
+// Shared body of the catering and repostería pages: hero, marquee, offer rows, steps and closing band.
+import Titular from './Titular.astro';
+import Foto from './Foto.astro';
+import type { Catering } from '../lib/sanity';
+interface Props { p: Catering; boton?: string }
+const { p, boton } = Astro.props;
+const cinta = p.cinta ?? [];
+---
+<section class="page-head">
+<div class="wrap grid mid">
+<div>
+<p class="eyebrow rv">{p.etiqueta}</p>
+<h1 class="serif h-xl lines"><Titular value={p.titulo} em="accent" /></h1>
+<p class="lead rv" style="margin-top:24px">{p.texto}</p>
+<a class="btn rv" href="/contacto">{boton} <i class="arr"></i></a>
+</div>
+<div class="ph arch unmask"><Foto class="px" image={p.foto} w={1100} fetchpriority="high" /></div>
+</div>
+</section>
+
+<div class="marquee rev" aria-hidden="true">
+<div class="mq">
+{cinta.map((w) => <><span>{w}</span><i></i></>)}
+{cinta.map((w) => <><span>{w}</span><i></i></>)}
+</div>
+</div>
+
+<section class="sec" aria-labelledby="svc-h">
+<div class="wrap">
+<div class="split svc-head">
+<h2 id="svc-h" class="serif h-l lines"><Titular value={p.serviciosTitulo} /></h2>
+<p class="lead rv">{p.serviciosTexto}</p>
+</div>
+<div class="srows">
+
+{(p.servicios ?? []).map((x) => (
+<article class="srow">
+<div class="ph r-l unmask"><Foto class="px" image={x.foto} w={1000} loading="lazy" /></div>
+<div class="srow-body">
+<p class="eyebrow rv">{x.etiqueta}</p>
+<h3 class="serif h-m lines"><Titular text={x.titulo ?? ''} /></h3>
+<p class="rv">{x.texto}</p>
+<div class="rv"><p class="cap-s">{p.idealPara}</p><div class="tags">{(x.ideal ?? []).map((t) => <span class="tag">{t}</span>)}</div></div>
+<p class="incl rv">{x.incluye}</p>
+</div>
+</article>
+))}
+
+</div>
+</div>
+</section>
+
+<section class="sec bg-sand round-top" aria-labelledby="how-h">
+<div class="wrap">
+<div class="center-head">
+<p class="eyebrow rv">{p.pasosEtiqueta}</p>
+<h2 id="how-h" class="serif h-l lines"><Titular value={p.pasosTitulo} /></h2>
+<p class="lead rv">{p.pasosTexto}</p>
+</div>
+<div class="steps">
+<div class="stline" data-scrub="x" aria-hidden="true"></div>
+{(p.pasos ?? []).map((x, i) => <div class="step rv"><span class="num">{i + 1}</span><h3 class="serif">{x.titulo}</h3><p>{x.texto}</p></div>)}
+</div>
+</div>
+</section>
+
+<section class="band" aria-labelledby="cta-h">
+<div class="wrap">
+<div>
+<h2 id="cta-h" class="serif h-l lines"><Titular value={p.finalTitulo} /></h2>
+<p class="rv">{p.finalTexto}</p>
+</div>
+<a class="btn rv" href="/contacto">{p.finalBoton} <i class="arr"></i></a>
+</div>
+</section>

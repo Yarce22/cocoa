@@ -33,6 +33,7 @@ export const ajustes = defineType({
     f({ name: 'usuarioRedes', title: 'Usuario en redes', type: 'string', group: 'redes', description: 'Ej: @cocoa.pasteleria' }),
     f({ name: 'menuCatering', title: 'Menú: Catering', type: 'string', group: 'menu' }),
     f({ name: 'menuReposteria', title: 'Menú: Repostería', type: 'string', group: 'menu' }),
+    f({ name: 'menuGaleria', title: 'Menú: Galería', type: 'string', group: 'menu' }),
     f({ name: 'menuNosotros', title: 'Menú: Nosotros', type: 'string', group: 'menu' }),
     f({ name: 'menuInicio', title: 'Menú: Inicio (celular)', type: 'string', group: 'menu' }),
     f({ name: 'botonCotizar', title: 'Botón principal "Cotiza tu evento"', type: 'string', group: 'menu', description: 'Texto del botón que lleva al cotizador. Aparece en el menú y en varias páginas.' }),
@@ -67,7 +68,7 @@ export const inicio = defineType({
     f({ ...titular('portadaTitulo', 'Título de portada'), group: 'portada' }),
     f({ ...str('portadaSubtitulo', 'Subtítulo'), group: 'portada' }),
     f({ ...str('portadaBoton', 'Botón principal'), group: 'portada' }),
-    f({ ...str('portadaEnlace', 'Enlace secundario (a repostería)'), group: 'portada' }),
+    f({ ...str('portadaEnlace', 'Enlace secundario (a la galería)'), group: 'portada' }),
     f({ ...str('portadaSello', 'Texto del sello giratorio', 'Ej: Cotiza tu evento · Hecho a mano ·'), group: 'portada' }),
     f({ ...str('portadaDesliza', 'Indicación "Desliza"'), group: 'portada' }),
     f({ ...palabras('cinta', 'Palabras de la cinta animada', 'Las palabras que pasan en movimiento bajo la portada.'), group: 'portada' }),
@@ -86,7 +87,7 @@ export const inicio = defineType({
         fields: [
           str('etiqueta', 'Etiqueta', 'Ej: 01 · Catering'), str('titulo', 'Título'), txt('texto', 'Texto'), foto(),
           str('enlace', 'Texto del enlace'),
-          f({ name: 'destino', title: 'Lleva a la página', type: 'string', options: { list: [{ title: 'Catering', value: '/catering' }, { title: 'Repostería', value: '/reposteria' }, { title: 'Nosotros', value: '/nosotros' }, { title: 'Cotizador', value: '/contacto' }], layout: 'radio' }, initialValue: '/catering' }),
+          f({ name: 'destino', title: 'Lleva a la página', type: 'string', options: { list: [{ title: 'Catering', value: '/catering' }, { title: 'Repostería', value: '/reposteria' }, { title: 'Galería', value: '/galeria' }, { title: 'Nosotros', value: '/nosotros' }, { title: 'Cotizador', value: '/contacto' }], layout: 'radio' }, initialValue: '/catering' }),
         ],
         preview: { select: { title: 'titulo', subtitle: 'etiqueta', media: 'foto' } },
       })],
@@ -108,10 +109,11 @@ export const inicio = defineType({
   preview: { prepare: () => ({ title: 'Página de inicio' }) },
 });
 
-/* --------------------------------------------------------------- catering */
-export const catering = defineType({
-  name: 'catering',
-  title: 'Página de catering',
+/* ------------------------------------------------- catering and repostería */
+/** Catering and repostería share one layout: hero, offer rows, steps and a closing band. */
+const paginaServicios = (name: string, title: string, ejemplo: { etiqueta: string; incluye: string }) => defineType({
+  name,
+  title,
   type: 'document',
   groups: [
     { name: 'portada', title: 'Portada', default: true },
@@ -134,9 +136,9 @@ export const catering = defineType({
       of: [defineArrayMember({
         type: 'object', name: 'servicio', title: 'Servicio',
         fields: [
-          str('etiqueta', 'Etiqueta', 'Ej: 01 · Empresas'), str('titulo', 'Título'), txt('texto', 'Texto'), foto(),
+          str('etiqueta', 'Etiqueta', `Ej: ${ejemplo.etiqueta}`), str('titulo', 'Título'), txt('texto', 'Texto'), foto(),
           palabras('ideal', 'Ideal para', 'Escribe cada ocasión y presiona Enter.'),
-          str('incluye', 'Qué incluye', 'Ej: Incluye: menú a la medida, meseros, montaje y menaje.'),
+          str('incluye', 'Qué incluye', `Ej: ${ejemplo.incluye}`),
         ],
         preview: { select: { title: 'titulo', subtitle: 'etiqueta', media: 'foto' } },
       })],
@@ -150,13 +152,21 @@ export const catering = defineType({
     f({ ...str('finalBoton', 'Botón'), group: 'final' }),
     seo,
   ],
-  preview: { prepare: () => ({ title: 'Página de catering' }) },
+  preview: { prepare: () => ({ title }) },
 });
 
-/* ------------------------------------------------------------- repostería */
-export const reposteria = defineType({
-  name: 'reposteria',
-  title: 'Página de repostería',
+export const catering = paginaServicios('catering', 'Página de catering', {
+  etiqueta: '01 · Empresas', incluye: 'Incluye: menú a la medida, meseros, montaje y menaje.',
+});
+
+export const reposteria = paginaServicios('reposteria', 'Página de repostería', {
+  etiqueta: '01 · Tortas', incluye: 'Incluye: mensaje personalizado y caja para transportar.',
+});
+
+/* ---------------------------------------------------------------- galería */
+export const galeria = defineType({
+  name: 'galeria',
+  title: 'Página de galería',
   type: 'document',
   groups: [
     { name: 'portada', title: 'Portada', default: true },
@@ -179,7 +189,7 @@ export const reposteria = defineType({
     f({ ...foto('finalFoto', 'Foto'), group: 'final' }),
     seo,
   ],
-  preview: { prepare: () => ({ title: 'Página de repostería' }) },
+  preview: { prepare: () => ({ title: 'Página de galería' }) },
 });
 
 /* --------------------------------------------------------------- nosotros */
@@ -350,7 +360,7 @@ export const postre = defineType({
     f({ name: 'destacado', title: 'Mostrar en el inicio', type: 'boolean', initialValue: false, description: 'Aparece en "Los favoritos de la casa" de la página de inicio.' }),
     f({ name: 'nombreInicio', title: 'Nombre corto para el inicio', type: 'string', description: 'Opcional. Si lo dejas vacío se usa el nombre.', hidden: ({ parent }) => !parent?.destacado }),
     f({ name: 'ordenInicio', title: 'Orden en el inicio', type: 'number', description: 'Número para ordenar los postres del inicio: 1 va primero.', hidden: ({ parent }) => !parent?.destacado }),
-    f({ name: 'enGaleria', title: 'Mostrar en la galería de repostería', type: 'boolean', initialValue: true, description: 'Desactívalo si el postre solo debe aparecer en el inicio.' }),
+    f({ name: 'enGaleria', title: 'Mostrar en la galería', type: 'boolean', initialValue: true, description: 'Desactívalo si el postre solo debe aparecer en el inicio.' }),
     f({ name: 'orden', title: 'Orden', type: 'number', initialValue: 10, description: 'Número para ordenar en la galería: 1 va primero.' }),
   ],
   orderings: [{ title: 'Orden', name: 'orden', by: [{ field: 'orden', direction: 'asc' }] }],
@@ -372,4 +382,4 @@ export const miembro = defineType({
   preview: { select: { title: 'nombre', subtitle: 'cargo', media: 'foto' } },
 });
 
-export const documentTypes = [ajustes, inicio, catering, reposteria, nosotros, contacto, categoria, postre, miembro];
+export const documentTypes = [ajustes, inicio, catering, reposteria, galeria, nosotros, contacto, categoria, postre, miembro];
