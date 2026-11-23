@@ -19,7 +19,7 @@ export interface TituloYTexto { titulo?: string; texto?: string }
 export interface Ajustes {
   whatsapp?: string; whatsappVisible?: string; email?: string; ciudad?: string; ciudadCorta?: string; nota?: string;
   instagram?: string; tiktok?: string; facebook?: string; usuarioRedes?: string;
-  menuCatering?: string; menuReposteria?: string; menuNosotros?: string; menuInicio?: string;
+  menuCatering?: string; menuReposteria?: string; menuGaleria?: string; menuNosotros?: string; menuInicio?: string;
   botonCotizar?: string; botonWhatsapp?: string;
   pieTitulo?: Titular; pieDescripcion?: string; pieExplora?: string; pieHablemos?: string; pieSiguenos?: string;
   pieCopyright?: string; pieFirma?: string;
@@ -46,7 +46,10 @@ export interface Catering {
   seo?: Seo;
 }
 
-export interface Reposteria {
+/** Same layout and fields as catering. */
+export type Reposteria = Catering;
+
+export interface Galeria {
   etiqueta?: string; titulo?: Titular; texto?: string; filtroTodo?: string; botonPedir?: string;
   contadorUno?: string; contadorVarios?: string;
   finalEtiqueta?: string; finalTitulo?: Titular; finalTexto?: string; finalBoton?: string; finalFoto?: Foto;
@@ -91,7 +94,7 @@ export interface Postre {
 }
 export interface Miembro { _id: string; nombre?: string; cargo?: string; bio?: string; foto?: Foto; orden?: number }
 
-export interface Pages { inicio: Inicio; catering: Catering; reposteria: Reposteria; nosotros: Nosotros; contacto: Contacto }
+export interface Pages { inicio: Inicio; catering: Catering; reposteria: Reposteria; galeria: Galeria; nosotros: Nosotros; contacto: Contacto }
 
 /* ----------------------------------------------------------------- client */
 const projectId: string | undefined = import.meta.env.PUBLIC_SANITY_PROJECT_ID || undefined;
@@ -127,7 +130,7 @@ const POSTRE = `{ _id, nombre, foto, descripcion, detalle, alto, arco, destacado
 export const getCategories = () =>
   query<Categoria[]>(`*[_type == "categoria"] | order(orden asc, nombre asc) ${CATEGORIA}`, {}, []);
 
-/** Desserts shown in the repostería gallery (all except those with "Mostrar en la galería" turned off). */
+/** Desserts shown in the gallery page (all except those with "Mostrar en la galería" turned off). */
 export const getDesserts = () =>
   query<Postre[]>(`*[_type == "postre" && enGaleria != false] | order(orden asc, nombre asc) ${POSTRE}`, {}, []);
 

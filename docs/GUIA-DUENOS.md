@@ -14,7 +14,8 @@ Todo lo que se ve en la web (fotos, títulos, textos, postres, equipo, WhatsApp)
 | **Datos generales** | Número de WhatsApp, correo, ciudad, redes sociales, textos del menú y del pie de página. |
 | **Página de inicio** | Fotos de portada, títulos, servicios, historia y el llamado final. Arriba hay pestañas por cada parte de la página. |
 | **Página de catering** | Servicios, "Ideal para", pasos de trabajo. |
-| **Página de repostería** | Textos de la página. Los postres se editan en **Postres**. |
+| **Página de repostería** | Igual que catering: tipos de postres, "Ideal para", pasos para pedir. |
+| **Página de galería** | Textos de la galería de fotos. Los postres se editan en **Postres**. |
 | **Página de nosotros** | Línea de tiempo y valores. Las personas se editan en **Equipo**. |
 | **Página del cotizador** | Preguntas del quiz, opciones, ciudades y el mensaje que llega por WhatsApp. |
 | **Postres** | Cada foto de la galería: nombre, foto, categoría, descripción. |
